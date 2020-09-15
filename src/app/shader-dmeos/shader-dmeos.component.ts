@@ -60,7 +60,7 @@ export class ShaderDmeosComponent implements OnInit, OnDestroy {
     const canvas = document.createElement('canvas');
     this.renderer = new WebGLRenderer({
       canvas: canvas,
-      context: canvas.getContext('webgl2', { alpha: true, antialias: false }),
+      context: canvas.getContext('webgl2', { alpha: true, antialias: true }),
     });
     document.body.appendChild(this.renderer.domElement);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
