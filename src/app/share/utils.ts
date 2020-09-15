@@ -4,6 +4,7 @@ import {
   FloatType,
   LinearFilter,
   DataTexture,
+  Matrix4,
 } from 'three';
 
 export function makeArray(
@@ -54,4 +55,14 @@ export function makeTexture3d(img: Float32Array, x = 100, y = 100, z = 1) {
   texture.minFilter = LinearFilter;
   texture.unpackAlignment = 1;
   return texture;
+}
+
+export function printMatrix4(m: Matrix4) {
+  for (let i = 0; i < 4; i++) {
+    const row = [];
+    for (let j = 0; j < 4; j++) {
+      row.push(m.elements[i + j * 4]);
+    }
+    console.log(row.join(', '));
+  }
 }

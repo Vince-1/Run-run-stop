@@ -5,26 +5,19 @@ import {
   WebGLRenderer,
   Mesh,
   PlaneBufferGeometry,
-  MeshBasicMaterial,
-  Color,
-  PlaneGeometry,
-  BoxGeometry,
-  PerspectiveCamera,
   ShaderMaterial,
-  DataTexture,
-  RedFormat,
-  FloatType,
   NearestFilter,
   LinearFilter,
   Matrix4,
   Vector3,
   DoubleSide,
-  FrontSide,
-  BackSide,
   WebGLRenderTarget,
-  DataTexture3D,
-  BoxBufferGeometry,
   Vector2,
+  RGBFormat,
+  DepthTexture,
+  FloatType,
+  MeshBasicMaterial,
+  Color,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { fromEvent, throwError } from 'rxjs';
@@ -38,6 +31,12 @@ import { makeTexture3d, makeArray, makeTexture2d } from '../share/utils';
 })
 export class ConwayLifeGameComponent implements OnInit, OnDestroy {
   scene = new Scene();
+  cameraOut = new OrthographicCamera(
+    -window.innerWidth / 2,
+    window.innerWidth / 2,
+    -window.innerHeight / 2,
+    window.innerHeight / 2
+  );
   camera = new OrthographicCamera(
     -window.innerWidth / 2,
     window.innerWidth / 2,
@@ -48,25 +47,27 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
   orbit: OrbitControls;
   shaderM: ShaderMaterial;
   plane: Mesh;
+  planeOut: Mesh;
 
   bufferScene = new Scene();
-  bufferTexture = new WebGLRenderTarget(800, 600, {
+  bufferTarget = new WebGLRenderTarget(window.innerWidth, window.innerHeight, {
     minFilter: NearestFilter,
     magFilter: NearestFilter,
+    format: RGBFormat,
+    depthBuffer: true,
   });
 
   constructor() {
     const canvas = document.createElement('canvas');
     this.renderer = new WebGLRenderer({
       canvas: canvas,
-      context: canvas.getContext('webgl2', { alpha: true, antialias: false }),
+      context: canvas.getContext('webgl2', { alpha: true, antialias: true }),
     });
     document.body.appendChild(this.renderer.domElement);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.render(this.scene, this.camera);
 
-    this.orbit = new OrbitControls(this.camera, this.renderer.domElement); // add orbit
+    this.orbit = new OrbitControls(this.cameraOut, this.renderer.domElement); // add orbit
 
     this.shaderM = new ShaderMaterial({
       uniforms: {
@@ -81,7 +82,7 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
         // },
         center: { value: new Vector2(0, 0) },
         size: { value: new Vector2(window.innerWidth, window.innerHeight) },
-        shape: { value: new Vector2(4, 4) },
+        shape: { value: new Vector2(100, 100) },
       },
       vertexShader: shaders.conway.vertex,
       fragmentShader: shaders.conway.frag,
@@ -91,23 +92,26 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
       new PlaneBufferGeometry(window.innerWidth, window.innerHeight),
       this.shaderM
     );
-  }
-  printMatrix4(m: Matrix4) {
-    for (let i = 0; i < 4; i++) {
-      const row = [];
-      for (let j = 0; j < 4; j++) {
-        row.push(m.elements[i + j * 4]);
-      }
-      console.log(row.join(', '));
-    }
-  }
-  ngOnInit(): void {
-    this.camera.position.z = 1500;
-    this.camera.up = new Vector3(0, 0, -1);
-    // this.scene.background = new Color('black');
-    this.renderer.render(this.scene, this.camera);
+    this.planeOut = new Mesh(
+      new PlaneBufferGeometry(window.innerWidth, window.innerHeight),
+      new MeshBasicMaterial({
+        // color: new Color('red'),
+        map: this.bufferTarget.texture,
+        side: DoubleSide,
+      })
+    );
 
-    this.scene.add(this.plane);
+    this.bufferScene.add(this.plane);
+    this.scene.add(this.planeOut);
+  }
+
+  ngOnInit(): void {
+    this.cameraOut.position.z = 1500;
+    this.cameraOut.up = new Vector3(0, 0, -1);
+    // this.scene.background = new Color('black');
+    this.renderer.render(this.scene, this.cameraOut);
+
+    // this.scene.add(this.plane);
 
     this.animate();
     fromEvent(this.renderer.domElement, 'mousedown').subscribe(
@@ -126,17 +130,20 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
   }
   animate() {
     requestAnimationFrame(() => this.animate());
-    this.renderer.render(this.scene, this.camera);
+    // this.renderer.render(this.scene, this.camera);
 
-    // this.renderer.setRenderTarget(this.bufferTexture);
-    // this.renderer.render(this.bufferScene, this.camera);
+    this.renderer.setRenderTarget(this.bufferTarget);
+    this.renderer.render(this.bufferScene, this.cameraOut);
+
+    this.renderer.setRenderTarget(null);
+    this.renderer.render(this.scene, this.cameraOut);
   }
 
   showMatrix() {
     console.log(
       'projection matrix: ',
-      this.camera.projectionMatrix,
-      this.camera.projectionMatrixInverse
+      this.cameraOut.projectionMatrix,
+      this.cameraOut.projectionMatrixInverse
     );
     console.log('world matrix: ', this.plane.matrix, this.plane.matrixWorld);
     console.log('modelView matrix: ', this.plane.modelViewMatrix);
@@ -144,18 +151,18 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
       'test: ',
       new Matrix4().multiplyMatrices(
         this.plane.matrixWorld,
-        this.camera.projectionMatrixInverse
+        this.cameraOut.projectionMatrixInverse
       )
     );
   }
   coordTrans(event: MouseEvent) {
     let px = (event.offsetX / this.renderer.domElement.width) * 2 - 1;
     let py = -(event.offsetY / this.renderer.domElement.height) * 2 + 1;
-    let p = new Vector3(px, py, 0).unproject(this.camera); // screen to scene
+    let p = new Vector3(px, py, 0).unproject(this.cameraOut); // screen to scene
     console.log(p);
     p.applyMatrix4(
       new Matrix4().multiplyMatrices(
-        this.camera.projectionMatrix,
+        this.cameraOut.projectionMatrix,
         this.plane.modelViewMatrix
       )
     ); // scene to screen
