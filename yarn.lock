@@ -7974,10 +7974,15 @@ three-full@^28.0.2:
   resolved "https://registry.npm.taobao.org/three-full/download/three-full-28.0.2.tgz#5e75f28904bd6050f868d68b7e68ac747e2a8c76"
   integrity sha1-XnXyiQS9YFD4aNaLfmisdH4qjHY=
 
-three@^0.119.1:
-  version "0.119.1"
-  resolved "https://registry.npm.taobao.org/three/download/three-0.119.1.tgz#9d979a082c4cd9622af8e3498a8dfa026a619332"
-  integrity sha1-nZeaCCxM2WIq+ONJio36AmphkzI=
+three-stats@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npm.taobao.org/three-stats/download/three-stats-1.0.1.tgz#44ebdcf87d31760196d174e18366364fae172a63"
+  integrity sha1-ROvc+H0xdgGW0XThg2Y2T64XKmM=
+
+three@^0.120.1:
+  version "0.120.1"
+  resolved "https://registry.npm.taobao.org/three/download/three-0.120.1.tgz#dbd8894f8ab87c109f1602933e7c740c98137377"
+  integrity sha1-29iJT4q4fBCfFgKTPnx0DJgTc3c=
 
 through2@^2.0.0:
   version "2.0.5"
