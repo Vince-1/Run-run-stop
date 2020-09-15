@@ -6,13 +6,25 @@ import {
   DataTexture,
 } from 'three';
 
-export function makeArray(n: number = 10000, x = 100, y = 100, z = 1) {
+export function makeArray(
+  n: number = 10000,
+  filter: 'linear' | 'random' | 'customize' = 'linear',
+  x = 100,
+  y = 100,
+  z = 1
+) {
   let img = new Float32Array(n);
   for (let i = 0; i < n; i++) {
-    if (i % 500 === 0) {
-      // img[i] = i ;
+    switch (filter) {
+      case 'linear':
+        img[i] = i / n;
+        break;
+      case 'random':
+        img[i] = Math.random();
+        break;
+      case 'customize':
+        break;
     }
-    img[i] = i / n;
   }
   console.log(img);
   return img;
@@ -22,7 +34,7 @@ export function makeTexture2d(img: Float32Array, x = 100, y = 100) {
   if (x * y !== img.length) {
     throw Error('shape not match img');
   }
-  const texture = new DataTexture(img, 100, 100);
+  const texture = new DataTexture(img, x, y);
   texture.format = RedFormat;
   texture.type = FloatType;
   texture.magFilter = LinearFilter;

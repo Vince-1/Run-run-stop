@@ -70,10 +70,18 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
 
     this.shaderM = new ShaderMaterial({
       uniforms: {
-        img: { value: makeTexture2d(makeArray(10000), 100, 100) },
+        // img: { value: makeTexture2d(makeArray(10000, 'random'), 100, 100) },
+        img: {
+          value: makeTexture2d(
+            new Float32Array([0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0]),
+            // new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
+            4,
+            4
+          ),
+        },
         center: { value: new Vector2(0, 0) },
         size: { value: new Vector2(window.innerWidth, window.innerHeight) },
-        shape: { value: new Vector2(100, 100) },
+        shape: { value: new Vector2(4, 4) },
       },
       vertexShader: shaders.conway.vertex,
       fragmentShader: shaders.conway.frag,
@@ -98,7 +106,6 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
     this.camera.up = new Vector3(0, 0, -1);
     // this.scene.background = new Color('black');
     this.renderer.render(this.scene, this.camera);
-
 
     this.scene.add(this.plane);
 
