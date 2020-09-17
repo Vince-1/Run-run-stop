@@ -1,8 +1,25 @@
 <nav>
   <a class="button" routerLink="">main</a> |
   <a class="button" routerLink="/soldiers">soldier</a> |
-  <a class="button" routerLink="/phoenix">phoenox</a> |
-  <a class="button" routerLink="/conway">conway life game</a> | 
-  <a class="button" routerLink="/shader demo">shader cube demo</a>
+  <a class="button" routerLink="/phoenix">phoenix</a> |
+  <a class="button" routerLink="/conway">conway life game</a> |
+  <a class="button" routerLink="/shader demo">shader cube demo</a> |
+  <a class="button" routerLink="/tile image">tile image</a>
+  <button routerLink="/tile image">tile image</button>
+  <div class="select1">
+    <select #aa (change)="aaa.click()">
+      <option value="/soldiers">soldier</option>
+      <option value="/phoenix">phoenix</option>
+      <option value="/conway">conway life game</option>
+      <option value="/shader demo">shader cube demo</option>
+      <option value="/tile image">tile image</option>
+    </select>
+    <button #aaa routerLink="{{ aa.value }}" (click)="show(aa.value)">
+      aa
+    </button>
+  </div>
+
+  <div>routerLink = {{ aa.value }}</div>
 </nav>
+
 <router-outlet></router-outlet>

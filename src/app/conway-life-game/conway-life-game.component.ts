@@ -18,6 +18,8 @@ import {
   FloatType,
   MeshBasicMaterial,
   Color,
+  DataTexture,
+  RedFormat,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { fromEvent, throwError } from 'rxjs';
@@ -49,15 +51,32 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
   plane: Mesh;
   planeOut: Mesh;
 
+  frameTexture: DataTexture;
+  // planeTop: Mesh;
+  b = 5;
+  a = this.b - 1;
+
+  planeTop = new Mesh(
+    new PlaneBufferGeometry(800, 600),
+    new MeshBasicMaterial({
+      color: new Color('red'),
+      side: DoubleSide,
+      // map: this.frameTexture,
+    })
+  );
   bufferScene = new Scene();
   bufferTarget = new WebGLRenderTarget(window.innerWidth, window.innerHeight, {
     minFilter: NearestFilter,
     magFilter: NearestFilter,
-    format: RGBFormat,
+    format: RedFormat,
     depthBuffer: true,
   });
 
   constructor() {
+    console.log(this.a, this.b);
+    this.b -= 1;
+    console.log(this.a, this.b);
+
     const canvas = document.createElement('canvas');
     this.renderer = new WebGLRenderer({
       canvas: canvas,
@@ -103,6 +122,20 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
 
     this.bufferScene.add(this.plane);
     this.scene.add(this.planeOut);
+
+    this.frameTexture = new DataTexture(
+      new Float32Array(480000),
+      800,
+      600,
+      RedFormat
+    );
+
+    this.planeTop.position.z = 100;
+    this.scene.add(this.planeTop);
+    // this.renderer.getContext()
+    // if (!this.renderer.context.getExtension('OES_texture_float')) {
+    //   alert('OES_texture_float is not supported :(');
+    // }
   }
 
   ngOnInit(): void {
@@ -136,6 +169,11 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
     this.renderer.render(this.bufferScene, this.cameraOut);
 
     this.renderer.setRenderTarget(null);
+    // this.renderer.copyFramebufferToTexture(
+    //   new Vector2(100, 100),
+    //   this.frameTexture
+    // );
+    this.renderer.clearDepth();
     this.renderer.render(this.scene, this.cameraOut);
   }
 

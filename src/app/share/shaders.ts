@@ -125,4 +125,51 @@ export namespace shaders {
           }
        `,
   };
+  export const tile = {
+    vertex: `
+          varying highp vec3 vTextureCoord;
+          
+          void main(void) {
+            vec4 p = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            gl_Position = p;
+            // vTextureCoord = vec3( modelMatrix * vec4(position, 1.0));
+            vTextureCoord = position;
+          }
+          `,
+    frag: `
+          uniform highp sampler3D img;
+          // uniform highp sampler2D img;
+          uniform highp vec3 center;
+          uniform highp vec3 shape;
+          uniform highp vec3 size;
+          uniform float z;
+          uniform highp vec2 grid;
+          uniform highp vec2 windowSize;
+
+          varying highp vec3 vTextureCoord;
+          
+          void main() {
+            float x = (vTextureCoord.x - center.x) / windowSize.x + 0.5;
+            float y = (vTextureCoord.y - center.y) / windowSize.y + 0.5;
+            
+            float x_g = fract(x * grid.x);
+            float y_g = fract(y * grid.y);
+
+            // float x_g = 1.0 - fract(x * grid.x);
+            // float y_g = 1.0 - fract(y * grid.y);
+
+            float row = floor(x * grid.x);
+            float col = floor(y * grid.y);
+
+            float z_g = (row* grid.y + col + z * 10.0) / size.z;
+
+            // vec4 texColor = texture(img,vec3(x_g,y_g,z_g));
+            vec4 texColor = texture(img,vec3(y_g,x_g,z_g));
+            
+            // vec4 texColor = texture(img,vec3(x,y,z));
+            gl_FragColor = texColor;
+            // gl_FragColor = vec4(x, y, z, 1.0);
+          }
+          `,
+  };
 }

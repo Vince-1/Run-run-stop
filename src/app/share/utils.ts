@@ -66,3 +66,14 @@ export function printMatrix4(m: Matrix4) {
     console.log(row.join(', '));
   }
 }
+
+export function transform16to32(arrayBuffer: ArrayBuffer) {
+  const rawArray = new Uint16Array(arrayBuffer);
+  const f32Array = new Float32Array(rawArray.length);
+  for (let i = 0; i < rawArray.length; i++) {
+    f32Array[i] = rawArray[i] / 1000;
+  }
+  //   const a = f32Array.sort((a, b) => (a > b ? a : b));
+  //   console.log(a);
+  return f32Array;
+}
