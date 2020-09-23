@@ -17,7 +17,6 @@ import { StubImage3D, loadStubData } from '../share/stub';
 import { makeTexture3d, makeArray, transform16to32 } from '../share/utils';
 import { shaders } from '../share/shaders';
 import { fromEvent } from 'rxjs';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-tile-image',
@@ -35,6 +34,8 @@ export class TileImageComponent implements OnInit, OnDestroy {
   renderer: WebGLRenderer;
   orbit: OrbitControls;
   z = 50;
+  shape = new Vector3(10, 10, 10);
+  size = new Vector3(10, 10, 10);
   shaderMaterial: ShaderMaterial = new ShaderMaterial({
     uniforms: {
       img: { value: makeTexture3d(makeArray(1000), 10, 10, 10) },
@@ -42,7 +43,7 @@ export class TileImageComponent implements OnInit, OnDestroy {
       size: { value: new Vector3(300, 300, 300) },
       shape: { value: new Vector3(10, 10, 10) },
       z: { value: 0.5 },
-      grid: { value: new Vector2(10.0, 10.0) },
+      grid: { value: new Vector2(5.0, 5.0) },
       windowSize: {
         value: new Vector2(window.innerWidth, window.innerHeight),
       },
@@ -77,13 +78,13 @@ export class TileImageComponent implements OnInit, OnDestroy {
         this.changeZ(this.z + event.deltaY / Math.abs(event.deltaY));
       }
     );
-    this.orbit = new OrbitControls(this.camera, canvas);
+    // this.orbit = new OrbitControls(this.camera, canvas);
 
     this.animate();
   }
 
   ngOnInit(): void {
-    loadStubData(StubImage3D.ct).then(
+    loadStubData(StubImage3D.petHead).then(
       (x) => {
         console.log(x);
         this.shaderMaterial.uniforms.img.value = makeTexture3d(
@@ -98,6 +99,12 @@ export class TileImageComponent implements OnInit, OnDestroy {
           x.shape.z * x.pixelSize.x
         );
         // this.plane.material = this.shaderMaterial;
+        this.shape = new Vector3(x.shape.x, x.shape.y, x.shape.z);
+        this.size = new Vector3(
+          x.shape.x * x.pixelSize.x,
+          x.shape.y * x.pixelSize.x,
+          x.shape.z * x.pixelSize.x
+        );
       },
       (e) => console.error(e)
     );

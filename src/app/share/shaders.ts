@@ -155,6 +155,9 @@ export namespace shaders {
             float x_g = fract(x * grid.x);
             float y_g = fract(y * grid.y);
 
+            float crop_y = y_g / 0.9;
+            float crop_x = x_g / 0.9;
+
             // float x_g = 1.0 - fract(x * grid.x);
             // float y_g = 1.0 - fract(y * grid.y);
 
@@ -163,8 +166,8 @@ export namespace shaders {
 
             float z_g = (row* grid.y + col + z * 10.0) / size.z;
 
-            // vec4 texColor = texture(img,vec3(x_g,y_g,z_g));
-            vec4 texColor = texture(img,vec3(y_g,x_g,z_g));
+            vec4 texColor = (y_g < 0.9 && x_g < 0.9) ? texture(img,vec3(crop_x,crop_y,z_g)) : vec4(x,y,z,1.0);
+            // vec4 texColor = texture(img,vec3(y_g,x_g,z_g));
             
             // vec4 texColor = texture(img,vec3(x,y,z));
             gl_FragColor = texColor;

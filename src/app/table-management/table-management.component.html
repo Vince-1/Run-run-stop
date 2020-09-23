@@ -1,0 +1,66 @@
+<p>table-management works!</p>
+
+<div class="table-wrapper" fxFlex fxLayout="column">
+  <table class="head-table">
+    <colgroup>
+      <col style="width: 180px" />
+      <col />
+      <col />
+      <col />
+      <col />
+      <col style="width: 400px" />
+    </colgroup>
+    <thead>
+      <tr>
+        <th>
+          <span>数据文件名</span>
+        </th>
+        <th>
+          <span>任务开始日期</span>
+        </th>
+        <th>
+          <span>任务开始时间</span>
+        </th>
+        <th>
+          <span>任务进行时间</span>
+        </th>
+        <th>
+          <span>中间结果文件</span>
+        </th>
+        <th class="text-left">
+          <span class="tab-link">进度</span>
+        </th>
+      </tr>
+    </thead>
+  </table>
+  <div fxFlex class="data-table-wrapper">
+    <table class="data-table">
+      <colgroup>
+        <col style="width: 180px" />
+        <col />
+        <col />
+        <col />
+        <col />
+        <col style="width: 400px" />
+      </colgroup>
+      <tbody>
+        <tr *ngFor="let item of [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]">
+          <td><div>name1.dcm</div></td>
+          <td><div>2020-06-22</div></td>
+          <td><div>10:22:33</div></td>
+          <td><div>27s</div></td>
+          <td>
+            <div fxLayout="column" fxLayoutAlign="center center">
+              <img src="assets/icon/ionic-ios-folder.svg" alt="" srcset="" />
+            </div>
+          </td>
+          <td class="text-left">
+            <div fxLayout="column" fxLayoutAlign="center start">
+              <div class="progress-bar"></div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

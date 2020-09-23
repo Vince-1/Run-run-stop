@@ -11,6 +11,7 @@ import { TileImageComponent } from './tile-image/tile-image.component';
 
 import { NzSliderModule } from 'ng-zorro-antd';
 import { FormsModule } from '@angular/forms';
+import { TableManagementComponent } from './table-management/table-management.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { FormsModule } from '@angular/forms';
     ConwayLifeGameComponent,
     ShaderDmeosComponent,
     TileImageComponent,
+    TableManagementComponent,
   ],
   imports: [
     BrowserModule,
