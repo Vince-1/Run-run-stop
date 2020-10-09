@@ -13,7 +13,8 @@ import { TileImageComponent } from './tile-image/tile-image.component';
 import { FormsModule } from '@angular/forms';
 import { TableManagementComponent } from './table-management/table-management.component';
 import { GpuinteractiveComponent } from './Gpuinteractive/Gpuinteractive.component';
-
+import { ColorshowComponent } from './colorshow/colorshow.component';
+import { ColorPicker} from './color-picker/color-picker.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,6 +25,8 @@ import { GpuinteractiveComponent } from './Gpuinteractive/Gpuinteractive.compone
     TileImageComponent,
     TableManagementComponent,
     GpuinteractiveComponent,
+    ColorshowComponent,
+    ColorPicker,
   ],
   imports: [
     BrowserModule,
@@ -36,6 +39,7 @@ import { GpuinteractiveComponent } from './Gpuinteractive/Gpuinteractive.compone
       { path: 'shader demo', component: ShaderDmeosComponent },
       { path: 'tile image', component: TileImageComponent },
       { path: 'gpuinteractive',component:GpuinteractiveComponent},
+      { path: 'colorpicker',component:ColorshowComponent},
     ]),
   ],
   providers: [],
