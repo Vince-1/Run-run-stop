@@ -13,6 +13,10 @@ export interface Ng3MosueDragEvent {
   last: Vector2;
   tag: 'mouseup' | 'mousedown' | 'mousemove' | 'mouseleave' | 'mouseenter';
 }
+interface MouseEvent {
+  layerX: number | undefined;
+  layerY: number | undefined;
+}
 @Component({
   selector: 'GpuinteractiveComponent',
   templateUrl: './Gpuinteractive.component.html',
@@ -210,7 +214,7 @@ export class GpuinteractiveComponent {
     const element = this.renderer.domElement;
     return fromEvent<MouseEvent>(element, name).pipe(
       map((e: MouseEvent) => {
-        const p = new Vector2(e.clientX, e.clientY);
+        const p = new Vector2(e.layerX, e.layerY);
         return {
           position: p,
           tag: name,
