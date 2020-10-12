@@ -15,6 +15,7 @@ import { TableManagementComponent } from './table-management/table-management.co
 import { GpuinteractiveComponent } from './Gpuinteractive/Gpuinteractive.component';
 import { ColorshowComponent } from './colorshow/colorshow.component';
 import { ColorPicker} from './color-picker/color-picker.component';
+import { ShaderColorpickerComponent } from './shader-colorpicker/shader-colorpicker.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,6 +28,7 @@ import { ColorPicker} from './color-picker/color-picker.component';
     GpuinteractiveComponent,
     ColorshowComponent,
     ColorPicker,
+    ShaderColorpickerComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,6 +42,7 @@ import { ColorPicker} from './color-picker/color-picker.component';
       { path: 'tile image', component: TileImageComponent },
       { path: 'gpuinteractive',component:GpuinteractiveComponent},
       { path: 'colorpicker',component:ColorshowComponent},
+      { path: 'shader-colorpicker',component:ShaderColorpickerComponent},
     ]),
   ],
   providers: [],
