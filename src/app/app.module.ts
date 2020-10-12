@@ -16,6 +16,7 @@ import { GpuinteractiveComponent } from './Gpuinteractive/Gpuinteractive.compone
 import { ColorshowComponent } from './colorshow/colorshow.component';
 import { ColorPicker} from './color-picker/color-picker.component';
 import { ShaderColorpickerComponent } from './shader-colorpicker/shader-colorpicker.component';
+import { ShaderColorpickerGpuComponent } from './shader-colorpicker-gpu/shader-colorpicker-gpu.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,6 +30,7 @@ import { ShaderColorpickerComponent } from './shader-colorpicker/shader-colorpic
     ColorshowComponent,
     ColorPicker,
     ShaderColorpickerComponent,
+    ShaderColorpickerGpuComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,6 +45,7 @@ import { ShaderColorpickerComponent } from './shader-colorpicker/shader-colorpic
       { path: 'gpuinteractive',component:GpuinteractiveComponent},
       { path: 'colorpicker',component:ColorshowComponent},
       { path: 'shader-colorpicker',component:ShaderColorpickerComponent},
+      {path: 'shader-colorpicker-gpu',component: ShaderColorpickerGpuComponent},
     ]),
   ],
   providers: [],

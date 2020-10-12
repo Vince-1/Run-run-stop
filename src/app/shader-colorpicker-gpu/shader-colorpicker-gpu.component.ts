@@ -6,7 +6,7 @@ import { map, mapTo, takeUntil, switchMap, scan } from 'rxjs/operators';
 import { Observable, fromEvent, Subject, merge } from 'rxjs';
 import { PRWMLoader } from 'three/examples/jsm/loaders/PRWMLoader.js';
 import { init,animate } from '../bird_test';
-// import { scene,camera,renderer } from '../bird_test';
+import { scene,camera,renderer } from '../bird_test';
             
 export interface Ng3MosueDragEvent {
   origin: Vector2;
@@ -20,10 +20,10 @@ interface MouseEvent {
 }
 @Component({
   selector: 'shader-colorpicker',
-  templateUrl: './shader-colorpicker.component.html',
-  styleUrls: ['./shader-colorpicker.component.less']
+  templateUrl: './shader-colorpicker-gpu.component.html',
+  styleUrls: ['./shader-colorpicker-gpu.component.less']
 })
-export class ShaderColorpickerComponent {
+export class ShaderColorpickerGpuComponent {
   geometry1 = new THREE.PlaneBufferGeometry(512, 512);
   geometry2 = new THREE.PlaneBufferGeometry(512, 512);
   geometry3 = new THREE.PlaneBufferGeometry(512, 512);
@@ -33,6 +33,7 @@ export class ShaderColorpickerComponent {
   geometry7 = new THREE.PlaneBufferGeometry(720, 20);
   geometry8 = new THREE.CircleBufferGeometry(12,);
   geometry9 = new THREE.CircleBufferGeometry(12);
+  geometry10 = new THREE.CircleBufferGeometry(400,400);
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
   // camera = new THREE.OrthographicCamera(- 512 * window.innerWidth / window.innerHeight , 512 * window.innerWidth / window.innerHeight , 512 , - 512 ,);
   scene = new THREE.Scene();
@@ -55,6 +56,7 @@ export class ShaderColorpickerComponent {
   mesh10:THREE.Mesh;
   mesh11:THREE.Mesh;
   mesh12:THREE.Mesh;
+  mesh13:THREE.Mesh;
   container: HTMLElement;
   move?: Observable<Event>;
   drag$: Observable<Ng3MosueDragEvent>;
@@ -100,8 +102,15 @@ export class ShaderColorpickerComponent {
  
   
   constructor() {
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(this.renderer.domElement);
+    // this.renderer.setSize(window.innerWidth, window.innerHeight);
+    // document.body.appendChild(this.renderer.domElement);
+   
+
+  }
+
+  ngOnInit(): void {
+    init();
+    animate();
     this.up$ = this.fromEventCurrentPosition('mouseup')
     .pipe
 
@@ -120,22 +129,18 @@ export class ShaderColorpickerComponent {
     // sampleTime(sampleTimeInW.mouseEvent),
     ();
     this.drag$ = this.createDrag$();
-
-  }
-
-  ngOnInit(): void {
-    // init();
-    // animate();
+    console.log(this.up$);
     this.move =
-        fromEvent(this.renderer.domElement, 'mousedown');
+        fromEvent(renderer.domElement, 'mousedown');
       this.move.subscribe(x => {
+        
         // this.onDocumentMouseMove((x as MouseEvent).clientX, (x as MouseEvent).clientY);
         this.onDocumentMouseMove((x as unknown as MouseEvent).layerX!, (x as unknown as MouseEvent).layerY!);
         
       })
     this.drag$.subscribe(
       (p) => {
-        console.log(p);
+        console.log("successfully");
         const point = new Vector2(p.current.x, p.current.y);
         this.onDocumentMouseMove(point.x, point.y);
       },
@@ -159,12 +164,11 @@ export class ShaderColorpickerComponent {
    })
    // this.rgbchange();
   }
-  ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
-    document.body.removeChild(this.renderer.domElement);
-  }
-
+  // ngOnDestroy(): void {
+  //   //Called once, before the instance is destroyed.
+  //   //Add 'implements OnDestroy' to the class.
+  //   document.body.removeChild(renderer.domElement);
+  // }
   onDocumentMouseMove(x: number, y: number) {
     let a = x; let b = y;
     this.setMouseCoords(a, b);
@@ -172,7 +176,7 @@ export class ShaderColorpickerComponent {
   }
   setMouseCoords(x: number, y: number) {
     
-    this.mouseCoords.set((x / this.renderer.domElement.clientWidth) * 2 - 1, - (y / this.renderer.domElement.clientHeight) * 2 + 1);
+    this.mouseCoords.set((x / renderer.domElement.clientWidth) * 2 - 1, - (y / renderer.domElement.clientHeight) * 2 + 1);
     this.mouseMoved = true;
   }
 
@@ -233,7 +237,7 @@ export class ShaderColorpickerComponent {
 
   pickerchange(){
     let picker = this.color/360 * 720 -360;
-    this.scene.children[12].position.x=picker;
+    scene.children[12].position.x=picker;
   }
 
   // pointadd(){
@@ -252,10 +256,10 @@ materialadd(){
     // this.container = document.createElement('div');
     // document.body.appendChild(this.container);
  
-    this.scene.add( this.ambient );
+    scene.add( this.ambient );
     let directionalLight = new THREE.DirectionalLight( 0xffeedd );
 		directionalLight.position.set( 0, 0, 1 );
-    this.scene.add( directionalLight );
+    scene.add( directionalLight );
     
   //   this.loader.load(this.url,(geometry)=>{
   //      mesh11=new THREE.Mesh(geometry,materialadd());
@@ -284,9 +288,9 @@ materialadd(){
   //    // sceneAdd(mesh10);
   //  })
     
-    this.scene.add(this.mesh10);
-    this.scene.add(this.mesh11);
-    this.scene.add(this.mesh12);
+    scene.add(this.mesh10);
+    scene.add(this.mesh11);
+    scene.add(this.mesh12);
     this.mesh11.position.z=8;
     this.mesh10.position.z=8;
     this.mesh12.position.z=8;
@@ -326,7 +330,7 @@ materialadd(){
     });
     this.mesh7 = new THREE.Mesh(this.geometry7,this.alphaMaterial);
     this.mesh7.translateY(340);
-    this.scene.add(this.mesh7);
+    scene.add(this.mesh7);
     // this.material1.depthTest=false;
     // this.material2.depthTest=false;
     // this.material2.depthWrite=false;
@@ -334,7 +338,10 @@ materialadd(){
     this.colorMaterial = new THREE.MeshBasicMaterial({ color: `hsl(${this.color},100%,50%)`, });
     this.showMaterial = new THREE.MeshBasicMaterial({ color: `hsl(${this.color},100%,50%)`, });
    // let pickerMaterial = new THREE.MeshBasicMaterial({ color: `hsl(300,100%,50%)`, });
-
+    let redcirclematerial = new THREE.MeshBasicMaterial({ color:`hsl(352,92%,49%)`, });
+    this.mesh13=new THREE.Mesh(this.geometry10,redcirclematerial);
+    this.mesh13.position.set(-1100,-300,-1000);
+    scene.add(this.mesh13);
     let circlematerial = new THREE.MeshBasicMaterial({ color:new Color('white'), });
     this.alphapicker = new THREE.MeshBasicMaterial({ color:new Color('white'), });
     this.mesh8 = new THREE.Mesh(this.geometry8,this.alphapicker);
@@ -352,19 +359,19 @@ materialadd(){
     this.mesh6.position.z=1.0;
     this.mesh5 = new THREE.Mesh(this.geometry5,this.pickerMaterial);
     this.mesh5.translateY(300);
-    this.scene.add(this.mesh5);
+    scene.add(this.mesh5);
     this.mesh4 = new THREE.Mesh(this.geometry4,this.showMaterial);
     this.mesh1 = new THREE.Mesh(this.geometry1, this.material1);
     this.mesh3 = new THREE.Mesh(this.geometry3,this.colorMaterial);
-    this.scene.add(this.mesh3);
+    scene.add(this.mesh3);
     this.mesh4.translateX(400);
-    this.scene.add(this.mesh4);
+    scene.add(this.mesh4);
     // this.mesh1.position.z = - 10;
-    this.scene.add(this.mesh1);
+    scene.add(this.mesh1);
     // let red = new MeshBasicMaterial({ color: new Color('red'), transparent: true, opacity: 0.5 })
     this.mesh2 = new THREE.Mesh(this.geometry2, this.material2);
     // this.mesh2.position.z = - 11;
-    this.scene.add(this.mesh2);
+    scene.add(this.mesh2);
 
   }
 
@@ -372,7 +379,7 @@ materialadd(){
     name: 'mouseup' | 'mousedown' | 'mousemove' | 'mouseleave' | 'mouseenter',
   ) {
     // const element =
-    const element = this.renderer.domElement;
+    const element = renderer.domElement;
     return fromEvent<MouseEvent>(element, name).pipe(
       map((e: MouseEvent) => {
         const p = new Vector2(e.layerX, e.layerY);
@@ -409,9 +416,11 @@ materialadd(){
   }
 
   render() {
+    
     if (this.mouseMoved) {
       this.mouseMoved = false;
-    this.raycaster1.setFromCamera(this.mouseCoords, this.camera);
+     
+    this.raycaster1.setFromCamera(this.mouseCoords, camera);
     var intersects = this.raycaster1.intersectObject(this.mesh5);
     if (intersects.length > 0) {
       let point = intersects[0].point;
@@ -422,7 +431,7 @@ materialadd(){
       this.alphaMaterial.uniforms.color.value = this.color;
     //  this.mesh7.material =new THREE.MeshBasicMaterial({ color: `hsl(${this.color},100%,50%)`, });
     }
-    this.raycaster2.setFromCamera(this.mouseCoords, this.camera);
+    this.raycaster2.setFromCamera(this.mouseCoords, camera);
     var intersects2 = this.raycaster2.intersectObject(this.mesh7);
     if (intersects2.length > 0) {
       let point1 = intersects2[0].point;
@@ -432,7 +441,7 @@ materialadd(){
       
     //  this.mesh7.material =new THREE.MeshBasicMaterial({ color: `hsl(${this.color},100%,50%)`, });
     }
-    this.raycaster3.setFromCamera(this.mouseCoords, this.camera);
+    this.raycaster3.setFromCamera(this.mouseCoords, camera);
     var intersects3 = this.raycaster3.intersectObject(this.mesh1);
     if (intersects3.length > 0) {
       let point2 = intersects3[0].point;
@@ -477,7 +486,7 @@ materialadd(){
     }
    console.log("H:",this.color,"S:",this.HSV_S,"V:",this.HSV_V);}
    console.log("R:",this.R,"G:",this.G,"B:",this.B);
-    this.renderer.render(this.scene, this.camera);
+    renderer.render(scene, camera);
     requestAnimationFrame(() => {
       this.render();
     });
