@@ -1,0 +1,128 @@
+import { Observable, from } from 'rxjs';
+import { Image3D, Vec3, pure } from './image3d';
+import { map, switchMap } from 'rxjs/operators';
+import * as THREE from 'three';
+import { get } from 'lodash';
+export interface StubDataMeta {
+  path: string;
+  shape: Vec3<number>;
+  pixelSize: Vec3<number>;
+  dtype: 'uint16' | 'float32';
+  scale: number;
+  offset: number;
+}
+const dataHost = `http://localhost:4200/assets`;
+export const Textures = {
+  gray: `${dataHost}/textures/cm_gray.png`,
+  viridis: `${dataHost}/textures/cm_viridis.png`,
+  petCT: `${dataHost}/textures/cm_petct.png`,
+};
+export const StubImage3D: {
+  [key: string]: StubDataMeta;
+} = {
+  pet: {
+    path: `${dataHost}/rabbit_images/rabbit1d_wholebody_pet.bin`,
+    shape: {
+      x: 240,
+      y: 240,
+      z: 424,
+    },
+    pixelSize: {
+      x: 1,
+      y: 1,
+      z: 1,
+    },
+    dtype: 'uint16',
+    scale: 1000,
+    offset: 0,
+  },
+  ct: {
+    path: `${dataHost}/rabbit_images/rabbit1d_wholebody_ct.uint16.bin`,
+    shape: {
+      x: 240,
+      y: 240,
+      z: 424,
+    },
+    pixelSize: {
+      x: 1,
+      y: 1,
+      z: 1,
+    },
+    dtype: 'uint16',
+    scale: 2048,
+    offset: 0.0,
+  },
+  petHead: {
+    path: `${dataHost}/head_pet/pet_img.bin`,
+    shape: {
+      x: 344,
+      y: 344,
+      z: 127,
+    },
+    pixelSize: {
+      x: 1,
+      y: 1,
+      z: 1,
+    },
+    dtype: 'uint16',
+    scale: 6895,
+    offset: 0.0,
+  },
+  mriHead: {
+    path: `${dataHost}/head_pet/mri_img.bin`,
+    shape: {
+      x: 512,
+      y: 512,
+      z: 192,
+    },
+    pixelSize: {
+      x: 250 / 512,
+      y: 250 / 512,
+      z: 1,
+    },
+    dtype: 'uint16',
+    scale: 774.2,
+    offset: 0.0,
+  },
+};
+
+export async function loadStubData(meta: StubDataMeta): Promise<Image3D> {
+  const r = await fetch(meta.path);
+  const b = await r.arrayBuffer();
+  console.log(r, b);
+  return {
+    shape: meta.shape,
+    pixelSize: meta.pixelSize,
+    dtype: meta.dtype,
+    data: b,
+    center: pure(0.0),
+  };
+}
+
+export async function loadColormap(url: string): Promise<THREE.Texture> {
+  const result = new Promise<THREE.Texture>((resolve, reject) => {
+    const texture = new THREE.TextureLoader().load(
+      url,
+      () => {
+        resolve(texture);
+      },
+      undefined,
+      (e) => reject(e)
+    );
+  });
+  return result;
+}
+
+export function loadColormap0(url: string): THREE.Texture {
+  let result = new THREE.Texture();
+  const texture = new THREE.TextureLoader().load(
+    url,
+    () => {
+      result = texture;
+    },
+    undefined,
+    (e) => console.error(e)
+  );
+
+  return result;
+}

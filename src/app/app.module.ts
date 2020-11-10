@@ -9,9 +9,12 @@ import { ConwayLifeGameComponent } from './conway-life-game/conway-life-game.com
 import { ShaderDmeosComponent } from './shader-dmeos/shader-dmeos.component';
 import { TileImageComponent } from './tile-image/tile-image.component';
 
-import { NzSliderModule } from 'ng-zorro-antd';
 import { FormsModule } from '@angular/forms';
 import { TableManagementComponent } from './table-management/table-management.component';
+import { BoundingboxPointSourceComponent } from './boundingbox-point-source/boundingbox-point-source.component';
+import { ThreeViewComponent } from './boundingbox-point-source/three-view/three-view.component';
+import { SingleViewComponent } from './boundingbox-point-source/single-view/single-view.component';
+import { PointSourceModule } from './boundingbox-point-source/point-source.module';
 
 @NgModule({
   declarations: [
@@ -25,14 +28,18 @@ import { TableManagementComponent } from './table-management/table-management.co
   ],
   imports: [
     BrowserModule,
-    NzSliderModule,
     FormsModule,
+    PointSourceModule,
     RouterModule.forRoot([
       { path: 'soldiers', component: ModelsSoldierComponent },
       { path: 'phoenix', component: ModelsPhoenixComponent },
       { path: 'conway', component: ConwayLifeGameComponent },
       { path: 'shader demo', component: ShaderDmeosComponent },
       { path: 'tile image', component: TileImageComponent },
+      {
+        path: 'boudingbox point source',
+        component: BoundingboxPointSourceComponent,
+      },
     ]),
   ],
   providers: [],
