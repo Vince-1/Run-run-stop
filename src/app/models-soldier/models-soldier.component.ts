@@ -53,7 +53,7 @@ export class ModelsSoldierComponent implements OnInit {
     this.camera.lookAt(0, 1, 0);
 
     this.scene.background = new THREE.Color(0xa0a0a0);
-    this.scene.fog = new THREE.Fog(0xa0a0a0, 10, 50);
+    // this.scene.fog = new THREE.Fog(0xa0a0a0, 10, 50);
 
     this.hemiLight.position.set(0, 20, 0);
     this.scene.add(this.hemiLight);

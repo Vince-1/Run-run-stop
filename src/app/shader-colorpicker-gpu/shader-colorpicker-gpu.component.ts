@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
  import * as THREE from 'three';
-import { ShaderMaterial, MeshBasicMaterial, Color, Vector2, Mesh } from 'three';
+import { ShaderMaterial, MeshBasicMaterial, Color, Vector2, Mesh, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { map, mapTo, takeUntil, switchMap, scan } from 'rxjs/operators';
 import { Observable, fromEvent, Subject, merge } from 'rxjs';
@@ -167,7 +167,8 @@ export class ShaderColorpickerGpuComponent {
   // ngOnDestroy(): void {
   //   //Called once, before the instance is destroyed.
   //   //Add 'implements OnDestroy' to the class.
-  //   document.body.removeChild(renderer.domElement);
+  //   if (document.body.contains(renderer.domElement)){
+  //   document.body.removeChild(this.renderer.domElement);}
   // }
   onDocumentMouseMove(x: number, y: number) {
     let a = x; let b = y;
@@ -298,6 +299,7 @@ materialadd(){
     this.mesh12.position.y=335;
     // this.scene.add(mesh11);
     this.camera.position.set(0, 0, 550);
+    this.camera.lookAt(0,0,0);
     // this.renderer.setPixelRatio(window.devicePixelRatio);
     // this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.material1 = new THREE.ShaderMaterial({
@@ -424,6 +426,7 @@ materialadd(){
     var intersects = this.raycaster1.intersectObject(this.mesh5);
     if (intersects.length > 0) {
       let point = intersects[0].point;
+      
       this.color = Math.round((point.x +360)/720 * 360);
       // this.scene.children[12].position.x=point.x;
       this.mesh11.position.x=point.x;
@@ -445,6 +448,7 @@ materialadd(){
     var intersects3 = this.raycaster3.intersectObject(this.mesh1);
     if (intersects3.length > 0) {
       let point2 = intersects3[0].point;
+      // console.log(point2);
       this.mesh9.position.x=point2.x;
       this.mesh9.position.y=point2.y;
       this.HSV_S=Math.round((point2.x+256)/512*100)/100;
