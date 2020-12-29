@@ -1,0 +1,34 @@
+@import '../pi-theme-core/pi-theme-core.less';
+
+// instruction:
+// you can find the CSS styles associate with
+// panel which usually used in framework
+// as shown below.
+
+/*page*/
+// .page {
+// margin: @margin;
+// }
+
+/*panel*/ // 在main, exam, maintenance 层用到
+.panel {
+  // background-color: @study-background;
+  background-color: @exam-right;
+  // padding: 2 * @padding;
+  // overflow: scroll; /*for text and dev. need delete after release*/
+}
+
+.panel::-webkit-scrollbar {
+  display: none;
+}
+
+/*image-panel*/
+.image-panel {
+  // background: @black;
+}
+
+/*block*/ // 用于校准页面
+.block {
+  background-color: @dark;
+  border-radius: @border-r-block;
+}

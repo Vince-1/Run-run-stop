@@ -175,4 +175,43 @@ export namespace shaders {
           }
           `,
   };
+  export const tomo = {
+    vertex: `
+          varying highp vec3 vTextureCoord;
+          
+          void main(void) {
+            vec4 p = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            gl_Position = p;
+            // vTextureCoord = vec3( modelMatrix * vec4(position, 1.0));
+            vTextureCoord = position;
+          }
+          `,
+    frag: `
+    uniform highp sampler3D img;
+    uniform highp sampler2D colormap;
+    varying highp vec3 vTextureCoord;
+    uniform highp vec3 center;
+    uniform highp vec3 shape;
+    uniform highp vec2 windowSize;
+    uniform float slicer;
+    uniform highp vec2 window;
+    // uniform highp float direction;
+    // uninform highp float slicer;
+
+
+    void main() {
+
+      float x = (vTextureCoord.x - center.x) / windowSize.x  + 0.5;
+      // float x = 0.5 ;
+      float y = (vTextureCoord.y - center.y ) / windowSize.y + 0.5;
+      // float z = (vTextureCoord.z - center.z ) / 1000.0 + 0.5;
+      float z = slicer / shape.z;
+      vec4 texColor = texture(img,vec3(x,y,z));
+      float level = max(min((texColor.r - window.x) / (window.y - window.x),1.0),0.0);
+      vec4 cmColor = texture2D(colormap, vec2(level,0.5));
+      gl_FragColor = cmColor;
+  }
+          `,
+  };
 }
+                  

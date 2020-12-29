@@ -1,0 +1,157 @@
+@import '../../pi-theme-core/pi-theme-core.less';
+
+// instruction:
+// you can find the CSS styles associate with
+// specific attributes reused repeatedly
+// and animations
+// as shown below.
+
+//////////*specific attributes*//////////
+
+/*cursor*/
+
+.cursor-default {
+  cursor: url('/assets/cursors/Arrow.cur'), default ;
+}
+.cursor-move {
+  cursor: url('/assets/cursors/SizeAll.cur'), move;
+}
+
+.cursor-not-allowed {
+  cursor: url('/assets/cursors/No.cur'), not-allowed;
+}
+
+.cursor-text {
+  cursor: url('/assets/cursors/IBeam.cur'), text;
+}
+.cursor-hover{
+  cursor: url('/assets/cursors/Hand.cur'), pointer !important;
+  &:hover {
+    filter: brightness(120%);
+  }
+}
+
+.cursor-hover-enhance {
+  cursor: url('/assets/cursors/Hand.cur'), pointer !important;
+}
+
+
+/*line*/
+@boundary: 2px solid @border;
+@split-line: 1px solid @border;
+
+/*text*/
+.panel-title {
+  color: darken(@primary-white, @pi-darken-percentage-2);
+  font-size: @fontSize-4;
+  font-weight: @bold;
+  padding: 0 3*@padding;
+}
+
+/*titile text*/
+.pi-title {
+  font-size: @fontSize-9;
+  font-weight: @bold;
+  text-decoration: underline;
+  color: @tertiary-white;
+  text-shadow: @shadow-title;
+}
+
+.maintenance-title {
+  font-size: @fontSize-11;
+  font-weight: @bold;
+  text-shadow: @shadow-title;
+  text-decoration: underline;
+  color: @tertiary-white;
+  text-align: center;
+}
+
+//////////*animations*//////////
+
+::selection {
+  color: @primary-black;
+  background: darken(@primary-white, @pi-darken-percentage-2);
+}
+
+/*circle button animation*/
+.circle-animation {
+  &:extend(.cursor-hover);
+  animation: iconLargeOff 0.1s linear;
+}
+
+.circle-animation:hover {
+  animation: iconLargeOn 0.1s linear;
+  animation-fill-mode: forwards;
+}
+
+/*translateY animation*/
+@keyframes hover {
+  from {
+    transform: none !important;
+    box-shadow: @shadow-primary-dark;
+  }
+  to {
+    transform: translateY(-2px);
+    box-shadow: @shadow-card-hover;
+  }
+}
+
+@keyframes cancel {
+  from {
+    transform: translateY(-2px);
+    box-shadow: @shadow-card-hover;
+    background-color: darken(@primary-black, @pi-darken-percentage-1);
+  }
+  to {
+    transform: none !important;
+    box-shadow: @shadow-primary-dark;
+    background-color: @primary-black;
+  }
+}
+
+/*scale animation*/
+@keyframes enlargeOn {
+  from {
+    transform: none;
+  }
+  to {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes enlargeOff {
+  from {
+    transform: scale(1.02);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes iconLargeOn {
+  from {
+    transform: none;
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes iconLargeOff {
+  from {
+    transform: scale(1.05);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/*shadow animation*/
+@keyframes procrssingShadow {
+  0% {
+    box-shadow: 0 0 0px @blue;
+  }
+  100% {
+    box-shadow: 0 0 8px @blue;
+  }
+}

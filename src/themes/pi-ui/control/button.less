@@ -1,0 +1,172 @@
+@import '../../pi-theme-core/pi-theme-core.less';
+
+/*button*/
+.pi-button {
+  font-family: @fontFamily-primary;
+  font-weight: @bold;
+  box-shadow: @shadow-control;
+  border: 0px;
+  margin: @margin;
+}
+
+.pi-button-hover(@hover-property: background, @hover-color:#FFFFFF) {
+  &:hover {
+    .pi-darken-2(@hover-color);
+    @{hover-property}: @pi-darken-color;
+  }
+}
+
+.pi-button-focus(@focus-property: color, @focus-color:#FFFFFF) {
+  &:focus {
+    .pi-darken-2(@focus-color);
+    @{focus-property}: @pi-darken-color;
+  }
+}
+
+/*for sort card in main page*/
+.pi-button-unselected-sort,
+.pi-button-selected-sort {
+  box-shadow: none;
+  border-radius: @border-r-block;
+  text-shadow: none;
+  font-weight: @medium;
+  border: 1px solid @primary-white;
+}
+
+.pi-button-unselected-sort {
+  &:extend(.pi-button);
+  background: none;
+  color: @primary-white;
+  .pi-button-hover(background, @text-in-button);
+  .pi-button-hover(color, @primary-white);
+  .pi-button-focus(color, @primary-white);
+}
+
+.pi-button-selected-sort {
+  &:extend(.pi-button);
+  background: @primary-white;
+  color: @text-in-button;
+  .pi-button-hover(background, @primary-white);
+  .pi-button-hover(color, @text-in-button);
+  .pi-button-focus(color, @text-in-button);
+}
+
+/*control current study-scan in main*/
+.pi-button-tips,
+.pi-button-tips-optional,
+.pi-button-tips-scan,
+.pi-button-tips-scanning,
+.pi-button-tips-cancel,
+.pi-button-tips-prepare,
+.pi-button-process-next,
+.pi-button-warn-cancel {
+  font-size: @fontSize-7-1;
+  height: @pi-related-size; // 这些按钮高度都是一致的
+}
+
+.pi-button-tips {
+  &:extend(.pi-button);
+  background: @light-blue;
+  .pi-button-hover(background, @light-blue);
+  .pi-button-hover(color, @tertiary-white);
+  .pi-button-focus(color, @tertiary-white);
+}
+
+.pi-button-tips-optional {
+  &:extend(.pi-button);
+  background-color: @inactive;
+  .pi-button-hover(background, @inactive);
+  .pi-button-hover(color, @tertiary-white);
+  .pi-button-focus(color, @tertiary-white);
+}
+
+.pi-button-tips-scan {
+  &:extend(.pi-button);
+  background-color: @green;
+  .pi-button-hover(background, @green);
+  .pi-button-hover(color, @tertiary-white);
+  .pi-button-focus(color, @tertiary-white);
+}
+
+.pi-button-tips-scanning {
+  &:extend(.pi-button);
+  background: @light-blue;
+  .pi-button-hover(background, @light-blue);
+  .pi-button-hover(color, @tertiary-white);
+  .pi-button-focus(color, @tertiary-white);
+}
+
+.pi-button-tips-prepare {
+  &:extend(.pi-button);
+  background: #7d8484;
+  .pi-button-hover(background, #7d8484);
+  .pi-button-hover(color, @tertiary-white);
+  .pi-button-focus(color, @tertiary-white);
+}
+
+// control in process, such as in user-hint component, maintenance component
+.pi-button-process-optional {
+  &:extend(.pi-button);
+  background: @dark;
+  color: @primary-white;
+  margin-left: 0;
+}
+
+.pi-button-process-next {
+  &:extend(.pi-button);
+  background: @green;
+  color: @primary-white;
+
+  .pi-button-hover(background, @green);
+  .pi-button-hover(color, @primary-white);
+  .pi-button-focus(color, @primary-white);
+}
+
+.pi-button-process-disable {
+  &:extend(.pi-button-process-optional);
+  opacity: 0.2;
+}
+
+.pi-button-tips-cancel {
+  &:extend(.pi-button);
+  // color: @tertiary-white;
+  background-color: @line-border;
+  .pi-button-hover(background, @line-border);
+  .pi-button-hover(color, @tertiary-white);
+  .pi-button-focus(color, @tertiary-white);
+}
+
+/*control in protocol-dashboard such as open protocol-menu, delete current protocol*/
+.pi-button-tips-optional-circle {
+  &:extend(.pi-button);
+  background: @protocol-background;
+  border-radius: 50%;
+  .pi-button-hover(background, @protocol-background);
+  .pi-button-hover(color, @tertiary-white);
+  .pi-button-focus(color, @tertiary-white);
+}
+
+/*posture button & scan-dynamic-card have been selected*/
+.shadow-button-selected {
+  box-shadow: @shadow-primary-white;
+  border: 0.5px solid @white;
+}
+
+.pi-button-warn-cancel {
+  &:extend(.pi-button);
+  background: @light-green;
+  color: @light-yellow;
+  font-size: @fontSize-6;
+  .pi-button-hover(background, @light-green);
+  .pi-button-hover(color, @light-yellow);
+  .pi-button-focus(color, @light-yellow);
+}
+
+.pi-button-light {
+  &:extend(.pi-button);
+  background: @primary-white;
+  color: @text-in-button;
+  .pi-button-hover(background, @primary-white);
+  .pi-button-hover(color, @text-in-button);
+  .pi-button-focus(color, @text-in-button);
+}

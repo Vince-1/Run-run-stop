@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from 'three';
-import { Stats } from 'three-stats';
+// import { Stats } from 'three-stats';
 import { fromEvent } from 'rxjs';
 import {
   Group,
@@ -41,7 +41,7 @@ export class ModelsSoldierComponent implements OnInit {
   runWeight = 0;
   singleStepMode = false;
 
-  stats = new Stats();
+  // stats = new Stats();
 
   constructor() {
     this.container = document.getElementById('container') as HTMLDivElement;
@@ -109,7 +109,7 @@ export class ModelsSoldierComponent implements OnInit {
     this.renderer.shadowMap.enabled = true;
     this.container.appendChild(this.renderer.domElement);
 
-    this.container.appendChild(this.stats.dom);
+    // this.container.appendChild(this.stats.dom);
 
     fromEvent(this.container, 'onWindowResize').subscribe(
       (x) => {
@@ -152,7 +152,7 @@ export class ModelsSoldierComponent implements OnInit {
 
     this.mixer.update(mixerUpdateDelta);
 
-    this.stats.update();
+    // this.stats.update();
 
     this.renderer.render(this.scene, this.camera);
   }

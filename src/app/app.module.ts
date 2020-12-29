@@ -15,6 +15,8 @@ import { BoundingboxPointSourceComponent } from './boundingbox-point-source/boun
 import { ThreeViewComponent } from './boundingbox-point-source/three-view/three-view.component';
 import { SingleViewComponent } from './boundingbox-point-source/single-view/single-view.component';
 import { PointSourceModule } from './boundingbox-point-source/point-source.module';
+import { TomoComponent } from './tomo/tomo.component';
+import { DanceComponent } from './dance/dance.component';
 
 @NgModule({
   declarations: [
@@ -25,11 +27,14 @@ import { PointSourceModule } from './boundingbox-point-source/point-source.modul
     ShaderDmeosComponent,
     TileImageComponent,
     TableManagementComponent,
+    TomoComponent,
+    DanceComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     PointSourceModule,
+    // ToolsModule,
     RouterModule.forRoot([
       { path: 'soldiers', component: ModelsSoldierComponent },
       { path: 'phoenix', component: ModelsPhoenixComponent },
@@ -40,6 +45,11 @@ import { PointSourceModule } from './boundingbox-point-source/point-source.modul
         path: 'boudingbox point source',
         component: BoundingboxPointSourceComponent,
       },
+      {
+        path: 'tomo',
+        component: TomoComponent,
+      },
+      { path: 'dance', component: DanceComponent },
     ]),
   ],
   providers: [],

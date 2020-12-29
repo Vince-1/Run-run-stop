@@ -1,0 +1,159 @@
+//////////*variables*//////////
+
+/*color*/
+
+// common light colors
+@primary-white: #9c9ea1; // normal color, unselected
+@secondary-white: #e2e2e2; // selected color, used in normal style
+@tertiary-white: #e6e6e6; // selected color, used in panel title
+
+// common dark colors
+@primary-black: #2f3037;
+@secondary-black: #242424;
+@tertiary-black: #191a1f;
+@neutral-black: #363840;
+@study-background-inactive:#1F2530;
+@inactive:#42484E;
+@split-card:#494A4B;
+@split-line-in-card:#474747;
+@study-background:#2D3848;
+@protocol-corner:#78859B;
+@protocol-background:#4A5568;
+@processing:#4AB8CF;
+@form-background:#3A4556;
+@bar-background:#1A202C;
+@exam-right:#1D2129;
+@textarea-background:#f3f3f3;
+@clear-color:rgba(0,0,0,0);
+
+
+// primary colors
+@white: #ffffff;
+@black: #000000;
+@green: #3e6b5a;
+@purple: #2c1b2e;
+
+// blue color and his family
+@blue: #187ca1;
+@light-blue: #415464;
+@dark-blue: #16202b;
+
+// certain color for certain area
+@bar: #111117;
+@line: #b5b5b5;
+@line-border: #484848;
+@line-connector: #5e5e63;
+@line-split: #515151;
+@text-in-button: #25262c;
+@text-in-tab: #9e9e9e;
+@light-gray: #56565c;
+@border:#66738A;
+
+// rarely used colors
+@dulled-gray: #454650;
+@flake-gray: #929292;
+@flake-white: #eeeeee;
+@light-white: #d4d4d4;
+@light-board-white: #4f5360;
+@dark: #212121;
+@gray: #4a4a4a;
+@brown: #343434;
+@dark-brown: #222429;
+@dulled-black: #191919;
+
+@light-green: #388e3c;
+@light-yellow: #ffffe5;
+@light-steel-blue: #959699;
+@dark-gray: #707070;
+@icon-boundary: #656565;
+@gray-dashed-line: #272727;
+
+@text-blue: #068ac5;
+@text-yellow: #c1c10f;
+
+/*color-darken*/
+@pi-darken-percentage-1: 1%;
+@pi-darken-percentage-2: 3%;
+@pi-darken-percentage-3: 5%;
+
+.pi-darken-1(@var-color: #ffffff) {
+  @pi-darken-color: darken(@var-color, @pi-darken-percentage-1);
+}
+.pi-darken-2(@var-color: #ffffff) {
+  @pi-darken-color: darken(@var-color, @pi-darken-percentage-2);
+}
+.pi-darken-3(@var-color: #ffffff) {
+  @pi-darken-color: darken(@var-color, @pi-darken-percentage-3);
+}
+@green-dark: darken(@green, @pi-darken-percentage-2);
+
+/*color-lighten*/
+@pi-lighten-percentage-3: 5%;
+
+.pi-lighten-3(@var-color: #ffffff) {
+  @pi-lighten-color: lighten(@var-color, @pi-lighten-percentage-3);
+}
+
+/*shadow*/
+// 字体: 0 3px 6px; 按钮: 0 0 4px
+@shadow-title: 0 1px 2px rgba(0, 0, 0, 20%);
+@shadow-config-1: 0 0 4px;
+@shadow-config-2: 0 3px 6px;
+
+@half-opacity-dark: rgba(0, 0, 0, 50%);
+@half-opacity-white: rgba(255, 255, 255, 50%);
+
+@shadow-primary-dark: @shadow-config-1 @half-opacity-dark;
+@shadow-secondary-dark: @shadow-config-2 @half-opacity-dark;
+@shadow-primary-white: @shadow-config-1 @half-opacity-white;
+
+// button
+@shadow-control: 0 3px 6px #000000;
+
+// card
+@shadow-card-selected: 0 0 4px #ffffff;
+@shadow-scan-selected-card: 0 0 8px @white;
+@shadow-recon: 0 0 6px #000000;
+@shadow-image: 2px 2px 4px #232323;
+@shadow-parameter: 0 0px 16px @secondary-black inset;
+@shadow-card-hover: 0 0 10px 6px #00000080;
+@shadow-panel: 0 1px 2px @black;
+
+// input
+@shadow-input: 0 0 2px @primary-black inset;
+@shadow-input-hover: 0 0 3px @primary-black inset;
+@shadow-input-focus: 0 0 5px @primary-black inset;
+
+// select
+@shadow-select: 0 0 2px @primary-black inset;
+@shadow-select-hover: 0 0 3px @primary-black inset;
+@shadow-select-focus: 0 0 5px @primary-black inset;
+
+// used in image-viewing
+@shadow-image-thumbnail: 2px 2px 4px #232323;
+@shadow-recon-item: 3px 0 6px @black;
+@shadow-protocol: 0 0 6px @black;
+
+// @shadow-button-selected: @shadow-config-1 @half-opacity-white;
+// @shadow-card: @shadow-config-1 @half-opacity-dark; //
+// @shadow-button-card: @shadow-config-1 @half-opacity-dark; //
+// text
+// @shadow-text: @shadow-config-2 @half-opacity-dark; //
+// @shadow-tab: 0px 3px 6px @black;
+// @base-dark: darken(@primary-white, @pi-darken-percentage-2);
+// @primary-dark: darken(@primary-black, @pi-darken-percentage-2);
+// @secondary-dark: darken(@secondary-black, @pi-darken-percentage-2);
+// @alarm-dark: darken(@alarm, @pi-darken-percentage-2);
+// @yellow-dark: darken(@yellow, @pi-darken-percentage-2);
+// @light-blue-dark: darken(@light-blue, @pi-darken-percentage-2);
+// @black-dark: darken(@black, @pi-darken-percentage-2);
+// @male-dark: darken(@male, @pi-darken-percentage-2);
+// @female-dark: darken(@female, @pi-darken-percentage-2);
+// @pi-lighten-percentage-1: 1%;
+// @pi-lighten-percentage-2: 3%;
+// .pi-lighten-1(@var-color: #ffffff) {
+//   @pi-lighten-color: lighten(@var-color, @pi-lighten-percentage-1);
+// }
+// .pi-lighten-2(@var-color: #ffffff) {
+//   @pi-lighten-color: lighten(@var-color, @pi-lighten-percentage-2);
+// }

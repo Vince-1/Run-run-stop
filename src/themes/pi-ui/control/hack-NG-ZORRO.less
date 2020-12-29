@@ -1,0 +1,557 @@
+@import '../../pi-theme-core/pi-theme-core.less';
+
+@base-white: @primary-white; // reused in calendar, input, radio
+@light-black: @secondary-black; // reused in calendar, input, radio
+@input-font-size: @fontSize-5; // reused in input, radio
+@parameter-input-border: 1px solid @base-white; // same with study-editot.less
+@parameter-input-height: 6.5 * @unit-px; // same with study-editot.less
+
+@nz-radio-inner-radius: 24px;
+@nz-radio-inner-checked-position: 7px; // reused in radio
+@dark-black: @primary-black; // reused in calendar, input, radio
+@light-white: @secondary-white; // reused in calendar, input, radio
+
+// Font
+// ---
+@font-size-base: @fontSize-4;
+@primary-color: @primary-black;
+@font-family: @fontFamily-primary;
+@text-color-secondary: @base-white;
+
+// Button
+// ---
+@btn-primary-color: @tertiary-white;
+@btn-primary-shadow: @shadow-primary-dark;
+@btn-font-weight: @bold;
+@btn-text-shadow: @shadow-secondary-dark;
+@btn-border-radius-base: @border-r-button;
+
+// Slider
+// ---
+@slider-rail-background-color: @light-black;
+@slider-rail-background-color-hover: lighten(
+  @neutral-black,
+  @pi-lighten-percentage-3
+);
+@slider-track-background-color: lighten(@light-black, 30%);
+@slider-track-background-color-hover: lighten(@light-black, 50%);
+@slider-handle-border-width: 2px;
+@slider-handle-background-color: @light-black;
+@slider-handle-color: @base-white;
+@slider-handle-color-hover: @base-white;
+@slider-handle-color-focus: @base-white;
+@slider-dot-border-color-active: @base-white;
+@slider-handle-shadow: 0 0 4px @base-white;
+
+// Radio
+// used in study-editor.less
+// @radio-button-bg: @base-white;
+// @radio-dot-color: @primary-black;
+// @radio-size: @fontSize-3;
+
+// Progress
+// used in maintenance-progress.less
+@progress-radius: 0px;
+@progress-remaining-color: @text-in-tab;
+
+// Collapse
+// used in ct-calibration-card.less
+@collapse-content-bg: inherit;
+@collapse-header-padding: 4px 4px 4px 40px;
+@collapse-panel-border-radius: 0;
+
+::ng-deep .ant-input-affix-wrapper {
+  padding: 0;
+}
+::ng-deep .ant-input-affix-wrapper .ant-input-suffix {
+  color: @base-white;
+}
+::ng-deep .ant-input-affix-wrapper > input.ant-input,
+::ng-deep .ant-picker-input > input {
+  padding: 0 2 * @padding;
+  border-bottom: 1px solid;
+}
+::ng-deep .ant-picker {
+  background: none;
+  padding: 0;
+}
+::ng-deep
+  .ant-select-disabled.ant-select-single:not(.ant-select-customize-input)
+  .ant-select-selector {
+  background: unset;
+  height: 100%;
+  border: 0;
+}
+::ng-deep .ant-select,
+::ng-deep
+.ant-select-item,
+::ng-deep
+  .ant-select-single:not(.ant-select-customize-input)
+  .ant-select-selector
+  .ant-select-selection-search-input {
+  &:extend(.cursor-hover);
+}
+
+// Input
+// ---
+@input-padding-vertical-base: 0px;
+@input-hover-border-color: @base-white;
+@input-border-color: @base-white;
+@input-bg: inherit;
+@input-disabled-bg: inherit;
+@input-color: @base-white;
+@disabled-color: @base-white;
+@border-width-base: 0px;
+@border-radius-base: 0px;
+@input-height-base: @parameter-input-height;
+
+::ng-deep .ant-input {
+  border-bottom: @parameter-input-border;
+}
+::ng-deep .ant-input:hover {
+  border-bottom: @parameter-input-border;
+}
+
+::ng-deep .ant-input[disabled]:hover {
+  border-bottom: @parameter-input-border;
+}
+
+::ng-deep .ant-input:focus {
+  border-bottom: @parameter-input-border;
+}
+
+::ng-deep .ant-input[disabled] {
+  color: @base-white;
+}
+
+
+// Tooltip
+// used in parameter-scan-extension.less
+@tooltip-color: @base-white;
+@tooltip-bg:fadeout (@light-black, 10%);
+
+//Model
+
+::ng-deep .ant-modal-content {
+  background: @neutral-black;
+  color: @primary-white;
+}
+
+::ng-deep .ant-modal-confirm-body .ant-modal-confirm-content {
+  color: @primary-white;
+  font-size: @fontSize-4;
+}
+
+// Pull-down
+::ng-deep .ant-select-dropdown-menu-item {
+  color: @base-white;
+  background-color: @primary-black;
+}
+
+::ng-deep .ant-checkbox-checked .ant-checkbox-inner,
+::ng-deep .ant-checkbox-inner {
+  background-color: @base-white;
+  border-color: @base-white;
+}
+
+::ng-deep .ant-checkbox-wrapper {
+  color: @base-white;
+}
+::ng-deep .ant-col > .ant-checkbox-wrapper {
+  font-size: @fontSize-4;
+  color: @black;
+}
+
+::ng-deep .ant-select-selection {
+  background-color: @primary-black;
+  border: 0px;
+  color: @base-white;
+}
+
+::ng-deep .ant-select-arrow {
+  color: @base-white;
+  // background-color: @light-black;
+}
+
+::ng-deep .ant-select-dropdown {
+  background-color: @primary-black;
+}
+
+::ng-deep .ant-select-dropdown-menu-item:hover {
+  color: @primary-black;
+  background-color: @base-white !important;
+}
+
+::ng-deep .ant-select-selection__placeholder {
+  color: @base-white;
+}
+
+::ng-deep
+  .ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled) {
+  background-color: @base-white;
+  color: @primary-black;
+}
+
+::ng-deep .ant-input-affix-wrapper .ant-input-suffix {
+  // color: @base-white;
+  font-size: @input-font-size;
+}
+
+/*calendar*/
+// used in study-editor.less
+::ng-deep .ant-calendar-picker,
+.ant-calendar-picker-container {
+  width: 100% !important;
+}
+
+// radio
+::ng-deep .ant-radio-wrapper {
+  font-size: @fontSize-3;
+  color: @base-white;
+  text-align: center;
+}
+
+::ng-deep .ant-radio-inner::after {
+  background-color: @dark-black;
+}
+
+::ng-deep .ant-radio-disabled + span {
+  color: @base-white;
+}
+
+::ng-deep .ant-radio-disabled .ant-radio-inner {
+  border-color: @primary-white !important;
+  background-color: @primary-white;
+}
+
+::ng-deep .ant-radio-checked .ant-radio-inner {
+  border-color: @base-white;
+  background-color: @light-white;
+}
+
+::ng-deep .ant-radio-checked .ant-radio-inner::after {
+  transform: scale(1.5);
+}
+
+::ng-deep .ant-radio-checked + span {
+  color: @light-white;
+}
+
+::ng-deep .ant-radio-disabled {
+  &:extend(.cursor-not-allowed);
+}
+
+::ng-deep .ant-radio-disabled .ant-radio-inner::after {
+  background-color: @primary-black;
+}
+
+::ng-deep .ant-radio-inner {
+  height: @nz-radio-inner-radius;
+  width: @nz-radio-inner-radius;
+  background-color: @base-white;
+  border-color: @base-white;
+}
+
+::ng-deep .ant-radio-inner::after {
+  top: @nz-radio-inner-checked-position;
+  left: @nz-radio-inner-checked-position;
+}
+
+::ng-deep .ant-progress-inner {
+  background-color: @text-in-tab;
+}
+
+// select
+// used in study-editor.less
+::ng-deep .ant-select-selection--single .ant-select-selection__rendered {
+  background-color: @neutral-black;
+  border-bottom: 1px solid @primary-white;
+  margin-right: 0;
+  margin-left: 0;
+  padding-left: 11px; // padding-left of an-input
+}
+
+::ng-deep .ant-select-disabled .ant-select-selection {
+  background: none;
+}
+
+::ng-deep .exam-parameter .ant-input:not(.ant-input-disabled):hover {
+  border-bottom: 1px solid @base-white !important;
+}
+
+//used in exam parameter form
+::ng-deep .ant-slider,
+::ng-deep .ant-select-selection,
+::ng-deep .ant-select-dropdown-menu-item,
+::ng-deep .ant-checkbox-input,
+::ng-deep .ant-checkbox-wrapper {
+  &:extend(.cursor-hover);
+}
+
+::ng-deep .ant-dropdown-menu {
+  padding: 0;
+}
+
+
+::ng-deep .ant-select-single[examFormSelector] .ant-select-selector {
+  color: @primary-white;
+  border: 0;
+  background-color: unset;
+}
+::ng-deep
+  .ant-select-disabled.ant-select-single[examFormSelector]:not(.ant-select-customize-input)
+  .ant-select-selector {
+  color: @primary-white;
+}
+
+// Switch
+// used in parameter-scan-extension.less
+// @switch-sm-height: 42px;
+// @switch-sm-min-width: 147px;
+
+// ::ng-deep .ant-calendar-selected-day .ant-calendar-date {
+// background-color: @light-black;
+// color: @base-white;
+// font-weight: @bold;
+// }
+
+// ::ng-deep .ant-calendar-selected-day .ant-calendar-date:hover {
+// background-color: @base-white;
+// color: @dark-black;
+// font-weight: @bold;
+// }
+
+// ::ng-deep .ant-calendar-today .ant-calendar-date {
+// color: @dark-black;
+// border-color: @light-black;
+// font-weight: @bold;
+// }
+
+// .pi-slider {
+// ::ng-deep .ant-slider {
+//   .ant-slider-track {
+//     // background-color: lighten(@light-black, 30%);
+//   }
+//   .ant-slider-rail {
+//     // background-color: @light-black;
+//   }
+//   .ant-slider-handle {
+//     // background-color: @light-black;
+//     // border: solid 2px @base-white;
+//     // box-shadow: 0 0 4px @base-white;
+//   }
+//   .ant-slider-dot-active {
+//     // border-color: @base-white;
+//   }
+// }
+
+// ::ng-deep .ant-slider:hover {
+//   .ant-slider-track {
+//     // background-color: lighten(@light-black, 50%);
+//   }
+//   .ant-slider-rail {
+//     // background-color: lighten(@neutral-black, @pi-lighten-percentage-3);
+// }
+// }
+
+// @slider-dot-border-color: red;
+// @slider-dot-border-color-active: red;
+// @slider-disabled-color: red;
+// @slider-disabled-background-color: red;
+
+// ::ng-deep .ant-slider-mark-text {
+// color: @base-white;
+// font-size: @fontSize-1; 14
+// }
+
+// ::ng-deep .ant-tooltip-inner {
+// color: @base-white;
+// background: fadeout(@light-black, 10%);
+// font-size: @fontSize-1;
+// }
+
+// ::ng-deep .ant-tooltip-placement-top .ant-tooltip-arrow {
+// border-top-color: fadeout(@light-black, 10%);
+// }
+
+// ::ng-deep .ant-select-selection:focus {
+// border: @base-white 1px solid !important;
+// }
+
+// ::ng-deep .ant-select-selection__rendered {
+// margin-left: 2px;
+// margin-right: 8px;
+// width: 70px;
+// }
+
+// @select-dropdown-bg: red;
+// @select-item-selected-bg: red;
+// @select-item-active-bg: red;
+
+/*calendar*/
+// used in study-editor.less
+
+// ::ng-deep .exam-parameter .ant-input:not(.ant-input-disabled):hover {
+//   border-bottom: 1px solid @base-white !important;
+// }
+// -- used in study-editor
+
+// ::ng-deep .ant-calendar-picker-input .ant-input {
+//   // border: none;
+//   // border-radius: 0px;
+//   // background-color: inherit;
+//   // color: @base-white;
+//   // font-size: @input-font-size;
+//   // height: @parameter-input-height;
+//   // border-bottom: @parameter-input-border;
+// }
+// TODO: input-hack in study-header & study-editor calendar, something in common
+
+// @input-placeholder-color: red;
+// @input-bg: red;
+
+// @input-icon-hover-color: red;
+
+// @input-addon-bg: red;
+
+// @input-number-handler-active-bg: red;
+// @input-number-handler-hover-bg: red;
+
+// ::ng-deep .ant-input {
+// background-color: inherit;
+// color: @base-white;
+// border: none;
+// border-radius: 0px;
+// font-size: @input-font-size;
+// height: @parameter-input-height;
+// border-bottom: @parameter-input-border;
+// }
+
+// ::ng-deep .ant-input-number-input {
+// color: @light-black;
+// }
+
+// ::ng-deep .ant-input:focus {
+// box-shadow: none;
+// border-color: @light-white;
+// }
+
+// ---calendar
+// ::ng-deep .ant-calendar-picker-icon {
+// background-color: @base-white;
+// }
+
+// ::ng-deep
+//   .ant-calendar-picker:focus
+//   .ant-calendar-picker-input:not(.ant-input-disabled) {
+// border-color: @light-black;
+// border-color: red;
+// box-shadow: none;
+// }
+
+// ::ng-deep .ant-calendar .ant-calendar-today-btn:only-child,
+// .ant-calendar .ant-calendar-clear-btn:only-child a {
+// color: @dark-black;
+// }
+
+// ::ng-deep .ant-calendar-date:hover {
+// background-color: @base-white;
+// font-weight: @bold;
+// }
+
+// ::ng-deep .ant-calendar-date {
+// color: @dark-black;
+// }
+
+// ::ng-deep .ant-calendar-header a,
+// ::ng-deep .ant-calendar-header a:hover {
+// color: @dark-black;
+// }
+
+// ::ng-deep .ant-calendar-input {
+// color: @dark-black;
+// }
+
+// ::ng-deep .ant-calendar-last-month-cell .ant-calendar-date:hover,
+// ::ng-deep .ant-calendar-next-month-btn-day .ant-calendar-date:hover {
+// font-weight: @bold;
+// background-color: @base-white;
+// }
+
+// ::ng-deep .ant-calendar {
+//   font-family: @fontFamily-primary;
+// }
+
+// ::ng-deep .ant-progress-inner {
+//   border-radius: 0;
+// }
+
+/*menu*/
+// used in maintenance.less
+// ::ng-deep .ant-menu-inline ::ng-deep .ant-menu-item:not(:last-child) {
+// margin-bottom: 0;
+// }
+
+// ::ng-deep .ant-collapse {
+// background-color: inherit; // inherit the background-color of pi-card
+// border: none;
+// width: 100%;
+// }
+
+// ::ng-deep .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+// color: @base-white;
+// }
+
+// ::ng-deep .ant-collapse-content {
+// color: @base-white;
+// background-color: inherit;
+// border: none;
+// }
+
+// ::ng-deep .ant-collapse > .ant-collapse-item {
+// border-bottom: 1px solid @light-black;
+// }
+
+// ::ng-deep .ant-collapse > .ant-collapse-item:last-child {
+// border-radius: 0;
+// }
+
+// ::ng-deep .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+// padding: 4px 4px 4px 40px;
+// font-size: 16px;
+// }
+
+// ::ng-deep .ant-collapse-content > .ant-collapse-content-box {
+// padding: 2px 4px 2px 48px;
+// }
+
+// ::ng-deep p {
+//   margin: 0;
+// }
+
+// ::ng-deep .ant-switch-checked {
+//   background-color: @light-black;
+//   border: 1px solid @base-white !important;
+// }
+
+// ::ng-deep .ant-switch {
+//   border: @base-white;
+//   width: 147px; //等比
+//   height: 42px;
+//   border: 1px solid @base-white !important;
+//   ::ng-deep .ant-switch-inner {
+//     font-size: 18px;
+//     font-weight: @bold;
+//   }
+// }
+
+// @switch-sm-height: 16px;
+// ::ng-deep .ant-switch-checked {
+//   height: 42px;
+// }
+
+// ::ng-deep .ant-switch::after {
+//   height: 38px;
+//   width: 38px;
+//   border-radius: 38px;
+// }

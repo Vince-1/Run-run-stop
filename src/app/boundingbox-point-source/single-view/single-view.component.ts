@@ -18,7 +18,7 @@ import {
   BoxBufferGeometry,
   Mesh,
 } from 'three';
-import { rangeW } from 'src/app/share/range';
+import { RangeW } from 'src/app/share/range';
 import { Image3DThreeView } from 'src/app/share/direction';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
@@ -42,7 +42,7 @@ export class SingleViewComponent implements OnInit {
       console.warn('colormap is: ', c);
     }
   }
-  @Input() set window(w: Maybe<rangeW>) {
+  @Input() set window(w: Maybe<RangeW>) {
     if (w?.be) {
       this.windowUpdate(w.value);
     } else {
@@ -54,7 +54,7 @@ export class SingleViewComponent implements OnInit {
       this.viewUpdate(d.value);
     } else {
       console.warn('view is: ', d);
-      rangeW
+      // rangeW
     }
   }
   @Input() cameraSize = new Vector2(500, 500);
@@ -91,6 +91,6 @@ export class SingleViewComponent implements OnInit {
   ngOnInit(): void {}
   imageUpdate(image: Image3D) {}
   colormapUpdate(colormap: Texture) {}
-  windowUpdate(window: rangeW) {}
+  windowUpdate(window: RangeW) {}
   viewUpdate(view: Image3DThreeView) {}
 }

@@ -1,4 +1,4 @@
-export class rangeW {
+export class RangeW {
   readonly start: number = 0;
   readonly end: number = 1;
   constructor(_start: number = 0, _end: number = 1) {

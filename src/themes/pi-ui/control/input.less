@@ -1,0 +1,78 @@
+@import '../../pi-theme-core/pi-theme-core.less';
+
+/*input*/
+.pi-input-hover(@hover-property: background, @hover-color:#FFFFFF) {
+  &:hover {
+    box-shadow: @shadow-input-hover;
+    .pi-lighten-3(@hover-color);
+    @{hover-property}: @pi-lighten-color;
+  }
+}
+
+.pi-input-focus(@focus-property: color, @focus-color:#FFFFFF) {
+  &:focus {
+    box-shadow: @shadow-input-focus;
+    .pi-lighten-3(@focus-color);
+    @{focus-property}: @pi-lighten-color;
+  }
+}
+
+.pi-input {
+  border: 0;
+  color: @primary-white;
+  height: 28px;
+  font-size: @fontSize-3;
+  margin: @margin;
+  box-shadow: @shadow-input;
+  background: @inactive;
+  --antd-wave-shadow-color: @primary-white;
+  .pi-input-hover(background, @secondary-black);
+  .pi-input-focus(background, @secondary-black);
+}
+
+.pi-input::placeholder {
+  color: darken(@primary-black, @pi-darken-percentage-2);
+  font-style: italic;
+}
+
+/*valuebox*/
+.pi-valuebox {
+  color: @primary-white;
+  font-size: @fontSize-3;
+  padding: 0 2 * @padding 0 2 * @padding;
+  box-shadow: @shadow-input;
+  border-radius: @border-r-button;
+  background: @secondary-black;
+}
+
+/*select*/
+.pi-select-hover(@hover-property: background, @hover-color:#FFFFFF) {
+  &:hover {
+    box-shadow: @shadow-select-hover;
+    .pi-lighten-3(@hover-color);
+    @{hover-property}: @pi-lighten-color;
+  }
+}
+
+.pi-select-focus(@focus-property: color, @focus-color:#FFFFFF) {
+  &:focus {
+    box-shadow: @shadow-select-focus;
+    .pi-lighten-3(@focus-color);
+    @{focus-property}: @pi-lighten-color;
+  }
+}
+
+.pi-select {
+  border: 0;
+  color: @primary-white;
+  width: 120px;
+  height: 28px;
+  margin-right: @margin;
+  font-size: @fontSize-3;
+  border-radius: @border-r-button;
+  box-shadow: @shadow-select;
+  background: @secondary-black;
+  --antd-wave-shadow-color: @primary-white;
+  .pi-select-hover(background, @secondary-black);
+  .pi-select-focus(background, @secondary-black);
+}
