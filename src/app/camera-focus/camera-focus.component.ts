@@ -2,7 +2,21 @@ import { Component, OnInit } from '@angular/core';
 
 import * as THREE from 'three';
 import { Color, Vector2, Vector3 } from 'three';
-import { fromEvent } from 'rxjs';
+import { fromEvent, Observable, Subject, merge } from 'rxjs';
+import { takeUntil, switchMap, map, scan } from 'rxjs/operators';
+
+export interface Ng3MouseDragEvent{
+  origin:Vector2;
+  current:Vector2;
+  last:Vector2;
+  tag:'mouseup'|'mousedown'|'mousemove'|'mouseleave'|'mouseenter';
+}
+
+interface MouseEvent {
+  layerX: number | undefined;
+  layerY: number | undefined;
+}
+
 
 @Component({
   selector: 'app-camera-focus',
@@ -23,20 +37,49 @@ export class CameraFocusComponent implements OnInit {
   p = new Vector3(0,0,0);
   size = new Vector2(800,400);
   meshSize = 100;
+
+  drag$:Observable<Ng3MouseDragEvent>;
+  up$:Observable<{
+    position:Vector2;
+    tag:"mouseup"|"mousedown"|"mousemove"|"mouseleave"|"mouseenter";
+  }>;
+  stop = new Subject<void>();
+  leave$:Observable<{
+    position:Vector2;
+    tag:"mouseup"|"mousedown"|"mousemove"|"mouseleave"|"mouseenter";
+  }>;
+  down$:Observable<{
+    position:Vector2;
+    tag:"mouseup"|"mousedown"|"mousemove"|"mouseleave"|"mouseenter";
+  }>;
+  position$:Observable<{
+    position:Vector2;
+    tag:"mouseup"|"mousedown"|"mousemove"|"mouseleave"|"mouseenter";
+  }>;
+
+
   constructor(){
 
-    fromEvent(this.renderer.domElement,'mousedown').subscribe(
-      x=>{
-        this.setMouseCoords((x as MouseEvent).clientX,(x as MouseEvent).clientY,1);
-       
-      }
-    )
 
-    fromEvent(this.renderer.domElement,'mousewheel').subscribe(
-      x=>{
-        this.setMouseCoords((x as MouseEvent).clientX,(x as MouseEvent).clientY,Math.abs((x as MouseWheelEvent).deltaY)/(x as MouseWheelEvent).deltaY);
-      }
-    )
+    this.up$ = this.fromEventCurrentPosition('mouseup').pipe();
+    this.leave$ = this.fromEventCurrentPosition('mouseleave').pipe();
+    this.down$ = this.fromEventCurrentPosition('mousedown').pipe();
+    this.position$=this.fromEventCurrentPosition('mousemove').pipe();
+    this.drag$ = this.creatDrag$();
+
+    // fromEvent(this.renderer.domElement,'mousedown').subscribe(
+    //   x=>{
+    //     this.setMouseCoords((x as unknown as MouseEvent).layerX,(x as unknown as MouseEvent).layerY,1);
+       
+    //   }
+    // )
+
+    // fromEvent(this.renderer.domElement,'mousewheel').subscribe(
+    //   x=>{
+    //     x.preventDefault();
+    //     this.setMouseCoords((x as unknown as MouseEvent).layerX,(x as unknown as MouseEvent).layerY,Math.abs((x as MouseWheelEvent).deltaY)/(x as MouseWheelEvent).deltaY);
+    //   }
+    // )
     
   }
 
@@ -47,8 +90,14 @@ export class CameraFocusComponent implements OnInit {
 
     this.p = new Vector3(this.mouseCoords.x,this.mouseCoords.y,-1).unproject(this.camera);
     let a =this.scale;
-    this.scale = this.scale+dt/10 ;
+
+    if(dt>0){
+    this.scale = this.scale+0.05;}
+    else{
+      this.scale =this.scale -0.01;
+    }
     
+    console.log(this.scale);
     console.log(this.p);
     let Cx = this.p.x /this.scale - this.p.x/a;
     let Cy = this.p.y /this.scale -this.p.y/a;
@@ -62,6 +111,11 @@ export class CameraFocusComponent implements OnInit {
   ngOnInit(): void {
     // init();
     // animate();
+    this.drag$.subscribe(
+      (p)=>{
+        this.setMouseCoords(p.origin.x,p.origin.y,(p.current.y-p.last.y))
+      }
+    )
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);
@@ -94,6 +148,50 @@ export class CameraFocusComponent implements OnInit {
     this.render();
 
   }
+
+
+  fromEventCurrentPosition(
+    name:'mouseup'|'mousedown'|'mousemove'|'mouseleave'|'mouseenter',
+  ){
+    const element = this.renderer.domElement;
+    return fromEvent<MouseEvent>(element,name).pipe(
+      map((e:MouseEvent)=>{
+        const p = new Vector2(e.layerX,e.layerY);
+        return {
+          position:p,
+          tag:name,
+        }
+      }),
+      takeUntil(this.stop),
+    )
+
+  }
+
+  creatDrag$():Observable<Ng3MouseDragEvent>{
+    const cancel = merge(this.up$,this.leave$);
+    return this.down$.pipe(
+      switchMap(
+        (d)=>{
+          return merge(this.down$,this.position$).pipe(
+            map(
+              (c)=>{
+                return {
+                  origin:d.position,
+                  current:c.position,
+                  last:c.position,
+                  tag:c.tag
+                };
+              }
+            ),
+            takeUntil(cancel),
+          );
+        }
+      ),
+      takeUntil(this.stop),
+      scan((acc,cur)=>({...cur,last:acc.current})),
+    );
+  }
+
 
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
