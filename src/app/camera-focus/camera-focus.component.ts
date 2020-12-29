@@ -67,19 +67,19 @@ export class CameraFocusComponent implements OnInit {
     this.position$=this.fromEventCurrentPosition('mousemove').pipe();
     this.drag$ = this.creatDrag$();
 
-    // fromEvent(this.renderer.domElement,'mousedown').subscribe(
-    //   x=>{
-    //     this.setMouseCoords((x as unknown as MouseEvent).layerX,(x as unknown as MouseEvent).layerY,1);
+    fromEvent(this.renderer.domElement,'mousedown').subscribe(
+      x=>{
+        this.setMouseCoords((x as unknown as MouseEvent).layerX,(x as unknown as MouseEvent).layerY,1);
        
-    //   }
-    // )
+      }
+    )
 
-    // fromEvent(this.renderer.domElement,'mousewheel').subscribe(
-    //   x=>{
-    //     x.preventDefault();
-    //     this.setMouseCoords((x as unknown as MouseEvent).layerX,(x as unknown as MouseEvent).layerY,Math.abs((x as MouseWheelEvent).deltaY)/(x as MouseWheelEvent).deltaY);
-    //   }
-    // )
+    fromEvent(this.renderer.domElement,'mousewheel').subscribe(
+      x=>{
+        x.preventDefault();
+        this.setMouseCoords((x as unknown as MouseEvent).layerX,(x as unknown as MouseEvent).layerY,Math.abs((x as MouseWheelEvent).deltaY)/(x as MouseWheelEvent).deltaY);
+      }
+    )
     
   }
 
