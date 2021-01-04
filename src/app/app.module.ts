@@ -19,6 +19,7 @@ import { ShaderColorpickerComponent } from './shader-colorpicker/shader-colorpic
 import { ShaderColorpickerGpuComponent } from './shader-colorpicker-gpu/shader-colorpicker-gpu.component';
 import { CameraFocusComponent } from './camera-focus/camera-focus.component';
 import { WireframComponent } from './wirefram/wirefram.component';
+import { TestPlanegeometryComponent } from './test-planegeometry/test-planegeometry.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,6 +36,7 @@ import { WireframComponent } from './wirefram/wirefram.component';
     ShaderColorpickerGpuComponent,
     CameraFocusComponent,
     WireframComponent,
+    TestPlanegeometryComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,6 +54,7 @@ import { WireframComponent } from './wirefram/wirefram.component';
       {path: 'shader-colorpicker-gpu',component: ShaderColorpickerGpuComponent},
       {path:'camera focus',component:CameraFocusComponent},
       {path:'testwirefram',component:WireframComponent},
+      {path:'testPlaneGeometry',component:TestPlanegeometryComponent},
     ]),
   ],
   providers: [],
