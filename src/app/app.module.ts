@@ -20,6 +20,15 @@ import { ShaderColorpickerGpuComponent } from './shader-colorpicker-gpu/shader-c
 import { CameraFocusComponent } from './camera-focus/camera-focus.component';
 import { WireframComponent } from './wirefram/wirefram.component';
 import { TestPlanegeometryComponent } from './test-planegeometry/test-planegeometry.component';
+
+import { BoundingboxPointSourceComponent } from './boundingbox-point-source/boundingbox-point-source.component';
+import { ThreeViewComponent } from './boundingbox-point-source/three-view/three-view.component';
+import { SingleViewComponent } from './boundingbox-point-source/single-view/single-view.component';
+import { PointSourceModule } from './boundingbox-point-source/point-source.module';
+import { TomoComponent } from './tomo/tomo.component';
+import { DanceComponent } from './dance/dance.component';
+import { AudioPlayerComponent } from './audio-player/audio-player.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,10 +47,12 @@ import { TestPlanegeometryComponent } from './test-planegeometry/test-planegeome
     WireframComponent,
     TestPlanegeometryComponent,
   ],
+ 
   imports: [
     BrowserModule,
-
     FormsModule,
+    PointSourceModule,
+    // ToolsModule,
     RouterModule.forRoot([
       { path: 'soldiers', component: ModelsSoldierComponent },
       { path: 'phoenix', component: ModelsPhoenixComponent },
@@ -55,6 +66,15 @@ import { TestPlanegeometryComponent } from './test-planegeometry/test-planegeome
       {path:'camera focus',component:CameraFocusComponent},
       {path:'testwirefram',component:WireframComponent},
       {path:'testPlaneGeometry',component:TestPlanegeometryComponent},
+      {
+        path: 'boudingbox point source',
+        component: BoundingboxPointSourceComponent,
+      },
+      {
+        path: 'tomo',
+        component: TomoComponent,
+      },
+      { path: 'dance', component: DanceComponent },
     ]),
   ],
   providers: [],

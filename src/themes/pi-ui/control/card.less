@@ -1,0 +1,59 @@
+@import '../../pi-theme-core/pi-theme-core.less';
+
+/*tab*/
+.pi-tab {
+  font-family: @fontFamily-primary;
+  // box-shadow: @shadow-tab;
+  border: 0px;
+  margin: 0 0.5 * @margin 0.5 * @margin 0.5 * @margin;
+}
+
+/*choose protocol in protocol-list*/
+.pi-tab-unselected-tab,
+.pi-selected-tab {
+  border-radius: @border-r-button @border-r-button 0 0;
+  font-weight: @bold;
+}
+
+.pi-tab-unselected-tab {
+  &:extend(.pi-tab);
+  background: @dark;
+  color: @text-in-tab;
+  .pi-button-hover(background, @dark);
+  .pi-button-hover(color, @text-in-tab);
+  .pi-button-focus(color, @text-in-tab);
+}
+
+.pi-selected-tab {
+  &:extend(.pi-tab);
+  background: @tertiary-white;
+  color: @text-in-button;
+  .pi-button-hover(background, @tertiary-white);
+  .pi-button-hover(color, @text-in-button);
+  .pi-button-focus(color, @text-in-button);
+}
+
+/*card*/
+.pi-card-hover(@hover-property: background, @hover-color:#FFFFFF) {
+  &:hover {
+    box-shadow: @shadow-card-hover;
+    .pi-darken-1(@hover-color);
+    @{hover-property}: @pi-darken-color;
+  }
+}
+
+.pi-card {
+  /*each panel*/
+  border: 0px;
+  // border-radius: @border-r-block;
+  padding: 0px;
+  font-family: @fontFamily-primary;
+  // background-color: @neutral-black;
+}
+
+.pi-parameter-card {
+  border-radius: @border-r-button;
+  box-shadow: @shadow-parameter;
+  padding: 0.5 * @padding 0 0 0;
+  background-color: @primary-black;
+}

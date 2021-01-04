@@ -13,10 +13,11 @@ import {
   Vector2,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { StubImage3D, loadStubData } from '../share/stub';
+// import { StubImage3D, loadStubData } from '../share/stub.ts.bak';
 import { makeTexture3d, makeArray, transform16to32 } from '../share/utils';
 import { shaders } from '../share/shaders';
 import { fromEvent } from 'rxjs';
+import { StubImage3D, loadStubData } from '../share/stub';
 
 @Component({
   selector: 'app-tile-image',
