@@ -115,6 +115,11 @@ export class DanceComponent implements OnInit {
       this.scene.add(model);
     });
   }
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    document.body.removeChild(this.renderer.domElement);
+  }
   render() {
     this.renderer.render(this.scene, this.camera);
   }

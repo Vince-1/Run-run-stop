@@ -17,6 +17,7 @@ import { SingleViewComponent } from './boundingbox-point-source/single-view/sing
 import { PointSourceModule } from './boundingbox-point-source/point-source.module';
 import { TomoComponent } from './tomo/tomo.component';
 import { DanceComponent } from './dance/dance.component';
+import { AudioPlayerComponent } from './audio-player/audio-player.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { DanceComponent } from './dance/dance.component';
     TableManagementComponent,
     TomoComponent,
     DanceComponent,
+    AudioPlayerComponent,
   ],
   imports: [
     BrowserModule,

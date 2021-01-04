@@ -41,6 +41,11 @@ export class TomoComponent implements OnInit {
     -window.innerHeight / 2,
     window.innerHeight / 2
   );
+
+  tx = 2048;
+  ty = 2048;
+  tz = 100;
+
   renderer: WebGLRenderer;
   orbit: OrbitControls;
   z = 50;
@@ -48,12 +53,19 @@ export class TomoComponent implements OnInit {
   size = new Vector3(10, 10, 10);
   shaderMaterial = new ShaderMaterial({
     uniforms: {
-      img: { value: makeTexture3d(makeArray(1000), 10, 10, 10) },
+      img: {
+        value: makeTexture3d(
+          makeArray(this.tx * this.ty * this.tz, 'random'),
+          this.tx,
+          this.ty,
+          this.tz
+        ),
+      },
       colormap: {
         value: new TextureLoader().load('assets/textures/cm_petct.png'),
       },
       center: { value: new Vector3(0, 0, 0) },
-      shape: { value: new Vector3(10, 10, 10) },
+      shape: { value: new Vector3(this.tx, this.ty, this.tz) },
       pixelSize: { value: new Vector3(1, 1, 1) },
       window: { value: new Vector2(0, 1) },
       windowSize: {
@@ -105,13 +117,13 @@ export class TomoComponent implements OnInit {
       (e) => console.error(e)
     );
 
-    loadStubData(StubImage3D.ct).then(
-      (x) => {
-        console.log(x);
-        this.setImage(x);
-      },
-      (e) => console.error(e)
-    );
+    // loadStubData(StubImage3D.ct).then(
+    //   (x) => {
+    //     console.log(x);
+    //     this.setImage(x);
+    //   },
+    //   (e) => console.error(e)
+    // );
     loadColormap(Textures.gray).then();
   }
   setImage(img: Image3D) {
