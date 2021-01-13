@@ -1,11 +1,13 @@
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { fromEvent } from 'rxjs';
 import {
   BoxGeometry,
   Color,
   DirectionalLight,
   DoubleSide,
   Fog,
+  Group,
   HemisphereLight,
   Mesh,
   MeshBasicMaterial,
@@ -62,7 +64,7 @@ export class DanceComponent implements OnInit, OnDestroy {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
-    this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
+    // this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
     this.camera.position.z = 10;
 
     this.floor.rotation.x = -0.5 * Math.PI;
@@ -85,6 +87,7 @@ export class DanceComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const saraLoader = new GLTFLoader();
+    let m: Group;
     saraLoader.load('assets/seraphine/scene.gltf', (gltf) => {
       console.log(gltf);
       const model = gltf.scene;
@@ -113,7 +116,43 @@ export class DanceComponent implements OnInit, OnDestroy {
         o.receiveShadow = true;
       });
       this.scene.add(model);
+      m = model;
     });
+    fromEvent(this.renderer.domElement, 'mousewheel').subscribe(
+      (x) => {
+        x.preventDefault();
+        console.log(x);
+      },
+      (e) => console.error(e)
+    );
+    fromEvent(window, 'keydown').subscribe(
+      (k: KeyboardEvent) => {
+        k.preventDefault();
+        // if (k.code === 'ArrowLeft') {
+        //   m.translateX(-1);
+        // }
+        switch (true) {
+          case k.code === 'KeyA' || k.code === 'ArrowLeft':
+            m.translateX(-1);
+            // this.camera.translateX(-1);
+            break;
+          case k.code === 'ArrowRight' || k.code === 'KeyD':
+            m.translateX(1);
+            break;
+          case k.code === 'ArrowUp' || k.code === 'KeyW':
+            m.translateY(1);
+            break;
+          case k.code === 'ArrowDown' || k.code === 'KeyS':
+            m.translateY(-1);
+            break;
+        }
+
+        // this.camera.lookAt(m.position);
+        console.log(m.position);
+        console.log(k.code);
+      },
+      (e) => console.error(e)
+    );
   }
   ngOnDestroy(): void {
     // Called once, before the instance is destroyed.
