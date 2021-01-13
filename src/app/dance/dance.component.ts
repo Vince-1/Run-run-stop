@@ -1,5 +1,5 @@
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   BoxGeometry,
   Color,
@@ -25,7 +25,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
   templateUrl: './dance.component.html',
   styleUrls: ['./dance.component.less'],
 })
-export class DanceComponent implements OnInit {
+export class DanceComponent implements OnInit, OnDestroy {
   scene = new Scene();
   camera = new PerspectiveCamera(
     50,
@@ -87,7 +87,7 @@ export class DanceComponent implements OnInit {
     const saraLoader = new GLTFLoader();
     saraLoader.load('assets/seraphine/scene.gltf', (gltf) => {
       console.log(gltf);
-      let model = gltf.scene;
+      const model = gltf.scene;
       // const o = model.children[0];
       // const explosionTexture = new TextureLoader().load(
       //   'assets/seraphine/textures/Mat_cwfyfr1_userboy17.bmp_diffuse.png'
@@ -116,8 +116,8 @@ export class DanceComponent implements OnInit {
     });
   }
   ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
+    // Called once, before the instance is destroyed.
+    // Add 'implements OnDestroy' to the class.
     document.body.removeChild(this.renderer.domElement);
   }
   render() {
