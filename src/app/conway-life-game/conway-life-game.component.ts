@@ -72,15 +72,23 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
     depthBuffer: true,
   });
 
+  tx = 16384;
+  ty = 16385;
+
   constructor() {
     console.log(this.a, this.b);
     this.b -= 1;
     console.log(this.a, this.b);
 
     const canvas = document.createElement('canvas');
+    const context = canvas.getContext('webgl2', {
+      alpha: true,
+      antialias: true,
+    });
+    console.log(context);
     this.renderer = new WebGLRenderer({
       canvas: canvas,
-      context: canvas.getContext('webgl2', { alpha: true, antialias: true }),
+      context: context,
     });
     document.body.appendChild(this.renderer.domElement);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -90,7 +98,13 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
 
     this.shaderM = new ShaderMaterial({
       uniforms: {
-        img: { value: makeTexture2d(makeArray(10000, 'random'), 100, 100) },
+        img: {
+          value: makeTexture2d(
+            makeArray(this.tx * this.ty, 'random'),
+            this.tx,
+            this.ty
+          ),
+        },
         // img: {
         //   value: makeTexture2d(
         //     new Float32Array([0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0]),
@@ -101,7 +115,7 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
         // },
         center: { value: new Vector2(0, 0) },
         size: { value: new Vector2(window.innerWidth, window.innerHeight) },
-        shape: { value: new Vector2(100, 100) },
+        shape: { value: new Vector2(this.tx, this.ty) },
       },
       vertexShader: shaders.conway.vertex,
       fragmentShader: shaders.conway.frag,
@@ -165,16 +179,16 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
     requestAnimationFrame(() => this.animate());
     // this.renderer.render(this.scene, this.camera);
 
-    this.renderer.setRenderTarget(this.bufferTarget);
+    // this.renderer.setRenderTarget(this.bufferTarget);
     this.renderer.render(this.bufferScene, this.cameraOut);
 
-    this.renderer.setRenderTarget(null);
+    // this.renderer.setRenderTarget(null);
     // this.renderer.copyFramebufferToTexture(
     //   new Vector2(100, 100),
     //   this.frameTexture
     // );
-    this.renderer.clearDepth();
-    this.renderer.render(this.scene, this.cameraOut);
+    // this.renderer.clearDepth();
+    // this.renderer.render(this.scene, this.cameraOut);
   }
 
   showMatrix() {
