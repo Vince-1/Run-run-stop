@@ -16,6 +16,7 @@ export class GameComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
+    
     combineLatest(fromEvent(window, 'keydown'), interval(100)).subscribe(
       ([event, time]: [KeyboardEvent, number]) => {
         switch (true) {
