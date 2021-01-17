@@ -18,6 +18,7 @@ import { PointSourceModule } from './boundingbox-point-source/point-source.modul
 import { TomoComponent } from './tomo/tomo.component';
 import { DanceComponent } from './dance/dance.component';
 import { AudioPlayerComponent } from './audio-player/audio-player.component';
+import { GameComponent } from './game/game.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { AudioPlayerComponent } from './audio-player/audio-player.component';
     TomoComponent,
     DanceComponent,
     AudioPlayerComponent,
+    GameComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,6 +54,7 @@ import { AudioPlayerComponent } from './audio-player/audio-player.component';
         component: TomoComponent,
       },
       { path: 'dance', component: DanceComponent },
+      { path: 'game', component: GameComponent },
     ]),
   ],
   providers: [],
