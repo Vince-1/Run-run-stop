@@ -10,13 +10,15 @@ import { initGame } from '../share/game';
 export class GameComponent implements OnInit {
   game = initGame();
   get gameJson() {
-    return JSON.stringify(this.game);
+    return JSON.stringify({
+      ...this.game,
+      chapterMap: { ...this.game.chapterMap, array: [] },
+    });
   }
 
   constructor() {}
 
   ngOnInit(): void {
-    
     combineLatest(fromEvent(window, 'keydown'), interval(100)).subscribe(
       ([event, time]: [KeyboardEvent, number]) => {
         switch (true) {
@@ -36,10 +38,16 @@ export class GameComponent implements OnInit {
             break;
           case event.keyCode === 65:
             this.left();
+            this.compute(time);
+            break;
           case event.keyCode === 68:
             this.right();
+            this.compute(time);
+            break;
           case event.keyCode === 87:
             this.up();
+            this.compute(time);
+            break;
           case event.keyCode === 83:
             this.down();
             this.compute(time);
