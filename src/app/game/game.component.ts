@@ -104,5 +104,6 @@ export class GameComponent implements OnInit {
       period,
       this.game.mario.y
     );
+    this.game.time = timeNow;
   }
 }
