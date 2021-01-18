@@ -45,12 +45,20 @@ export interface ChapterMap {
 export function getVelocity(
   acceleration: number,
   period: number,
-  originVelocity: number
+  originVelocity: number,
+  range: { min: number; max: number } = { min: -10, max: 10 }
 ) {
-  return originVelocity + acceleration * period;
+  const v = originVelocity + acceleration * period;
+  return Math.min(Math.max(v, range.min), range.max);
 }
-export function getMotion(velocity: number, period: number, origin: number) {
-  return origin + velocity * period;
+export function getMotion(
+  velocity: number,
+  period: number,
+  origin: number,
+  range: { min: number; max: number } = { min: 0, max: 1000 }
+) {
+  const m = origin + velocity * period;
+  return Math.min(Math.max(m, range.min), range.max);
 }
 
 export function initGame(): Game {
