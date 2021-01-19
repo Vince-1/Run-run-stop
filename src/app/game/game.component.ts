@@ -10,7 +10,7 @@ import { initGame } from '../share/game';
 })
 export class GameComponent implements OnInit {
   game = initGame();
-  period = 0;
+  period = 0.1;
   get gameJson() {
     return JSON.stringify(
       {
@@ -64,58 +64,59 @@ export class GameComponent implements OnInit {
     //   (x: KeyboardEvent) => console.log(x),
     //   (e) => console.error(e)
     // );
-    const time = interval(100);
+    const time = interval(1000 * this.period);
     fromEvent(window, 'keydown')
       .pipe(
-        buffer(time),
-        scan(
-          (
-            account: { events: KeyboardEvent[]; time: number },
-            current: KeyboardEvent[]
-          ) => ({
-            events: current,
-            time: account.time + 1,
-          }),
-          { events: [], time: 0 }
-        )
+        buffer(time)
+        // scan(
+        //   (
+        //     account: { events: KeyboardEvent[]; time: number },
+        //     current: KeyboardEvent[]
+        //   ) => ({
+        //     events: current,
+        //     time: account.time + 1,
+        //   }),
+        //   { events: [], time: 0 }
+        // )
       )
       .subscribe(
-        (k) => {
-          // if (events.length === 0) {
-          //   this.none();
-          // } else
+        (k: KeyboardEvent[]) => {
           switch (true) {
-            case k.events.length === 0:
+            case k.length === 0:
               this.none();
               break;
-            case k.events[0].keyCode === 97:
+            case k[0].keyCode === 97:
               this.gameInit();
               break;
-            case k.events[0].keyCode === 98:
+            case k[0].keyCode === 98:
               this.gameStart();
               break;
-            case k.events[0].keyCode === 99:
+            case k[0].keyCode === 99:
               this.gamePause();
               break;
-            case k.events[0].keyCode === 100 ||
-              k.time === 600 ||
-              this.game.mario.x === 500:
+            case k[0].keyCode === 100 ||
+              this.game.time > 600 ||
+              this.game.mario.x > 500:
               this.gameOver();
               break;
-            case k.events[0].keyCode === 65:
+
+            case k[0].keyCode === 65:
               this.left();
               break;
-            case k.events[0].keyCode === 68:
+            case k[0].keyCode === 68:
               this.right();
               break;
-            case k.events[0].keyCode === 87:
+            case k[0].keyCode === 87:
               this.up();
               break;
-            case k.events[0].keyCode === 83:
+            case k[0].keyCode === 83:
               this.down();
               break;
           }
-          this.compute(k.time * 0.1);
+
+          if (this.game.state === 'running') {
+            this.compute();
+          }
         },
         (e) => console.error(e)
       );
@@ -166,29 +167,29 @@ export class GameComponent implements OnInit {
         : 0;
     this.game.mario.accelerationY = this.game.mario.velocityY > 0 ? -1 : 0;
   }
-  compute(timeNow: number) {
-    const period = timeNow - this.game.time;
-    this.period = period;
+  compute() {
+    // const this.period = timeNow - this.game.time;
+    // this.period = this.period;
     this.game.mario.velocityX = this.game.mario.getVelocity(
       this.game.mario.accelerationX,
-      period,
+      this.period,
       this.game.mario.velocityX
     );
     this.game.mario.velocityY = this.game.mario.getVelocity(
       this.game.mario.accelerationY,
-      period,
+      this.period,
       this.game.mario.velocityY
     );
     this.game.mario.x = this.game.mario.getMotion(
       this.game.mario.velocityX,
-      period,
+      this.period,
       this.game.mario.x
     );
     this.game.mario.y = this.game.mario.getMotion(
       this.game.mario.velocityY,
-      period,
+      this.period,
       this.game.mario.y
     );
-    this.game.time = timeNow;
+    this.game.time += this.period;
   }
 }

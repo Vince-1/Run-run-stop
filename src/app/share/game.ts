@@ -1,3 +1,5 @@
+import { Vector2 } from 'three';
+
 export interface Game {
   state: 'ready' | 'running' | 'pausing' | 'over';
   chapter: [number, number];
@@ -19,6 +21,7 @@ export interface Mario {
   y: number;
   moveState: 'rushing' | 'still' | 'attacking' | 'squatting' | 'jumping';
   orientation: 'forward' | 'backward';
+  size: [number, number];
   getVelocity: (
     acceleration: number,
     period: number,
@@ -48,7 +51,10 @@ export function getVelocity(
   originVelocity: number,
   range: { min: number; max: number } = { min: -10, max: 10 }
 ) {
-  const v = originVelocity + acceleration * period;
+  let v = originVelocity + acceleration * period;
+  if (originVelocity * v < 0) {
+    v = 0;
+  }
   return Math.min(Math.max(v, range.min), range.max);
 }
 export function getMotion(
@@ -78,6 +84,7 @@ export function initMario(): Mario {
     accelerationY: 0,
     x: 0,
     y: 0,
+    size: [10, 15],
     moveState: 'still',
     orientation: 'forward',
     getVelocity: (
