@@ -18,7 +18,7 @@ export class GameComponent implements OnInit {
         chapterMap: { ...this.game.chapterMap, array: [] },
       },
       null,
-      2
+      1
     );
   }
 
