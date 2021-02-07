@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { combineLatest, fromEvent, interval } from 'rxjs';
 import { buffer, scan } from 'rxjs/operators';
+import { Matrix4, Vector2, Vector3 } from 'three';
 import { initGame } from '../share/game';
 
 @Component({
@@ -22,7 +23,28 @@ export class GameComponent implements OnInit {
     );
   }
 
-  constructor() {}
+  constructor() {
+    console.log(foo(1), foo(2), foo(100));
+    const a = { color: 'red' };
+    const f = foo;
+    const t = test;
+    console.log(foo);
+    console.log(f);
+    console.log(test);
+    console.log(t);
+
+    let planeAffine = new Matrix4().makeRotationX(Math.PI * 0.5);
+    let operation1 = new Matrix4().makeScale(1, -1, 1);
+    let operation2 = new Matrix4().makeTranslation(0, 1000, 0);
+    planeAffine = new Matrix4().multiplyMatrices(operation2, planeAffine);
+
+    console.log(planeAffine);
+    let p = new Vector3(100, 200, 300);
+    console.log(p.applyMatrix4(planeAffine));
+    // .applyMatrix4(operation2));
+    console.log(p);
+    // a.sayColor();
+  }
 
   ngOnInit(): void {
     // combineLatest(fromEvent(window, 'keydown'), interval(100)).
@@ -192,4 +214,17 @@ export class GameComponent implements OnInit {
     );
     this.game.time += this.period;
   }
+}
+
+function foo(n: number): number {
+  if (n <= 1) {
+    return n;
+  } else {
+    return n * foo(n - 1);
+    // return n * arguments.callee(n - 1);
+  }
+}
+
+function test(params: number) {
+  console.log(params);
 }

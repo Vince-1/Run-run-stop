@@ -1,21 +1,21 @@
 import { Component, OnInit, ElementRef, RendererFactory2 } from '@angular/core';
 import {
   Scene,
-  OrthographicCamera,
   WebGLRenderer,
   Vector3,
-  ShaderMaterial,
   Mesh,
-  PlaneBufferGeometry,
   Vector2,
   DoubleSide,
-  MeshBasicMaterial,
   Color,
   Texture,
   TextureLoader,
+  OrthographicCamera,
+  ShaderMaterial,
+  MeshBasicMaterial,
+  PlaneBufferGeometry,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { shaders } from '../share/shaders';
+import { shaders } from '../share/shader-fragments';
 import { makeTexture3d, makeArray, transform16to32 } from '../share/utils';
 import {
   loadStubData,
@@ -42,8 +42,11 @@ export class TomoComponent implements OnInit {
     window.innerHeight / 2
   );
 
-  tx = 2048;
-  ty = 2048;
+  // tx = 2048;
+  // ty = 2048;
+  // tz = 100;
+  tx = 100;
+  ty = 100;
   tz = 100;
 
   renderer: WebGLRenderer;
@@ -72,7 +75,7 @@ export class TomoComponent implements OnInit {
         value: new Vector2(this.width, this.height),
       },
       view: { value: 0 }, // 0,1,2 = xy,yz,xz
-      slicer: { value: 5.0 },
+      slicer: { value: 1.0 },
     },
     vertexShader: shaders.tomo.vertex,
     fragmentShader: shaders.tomo.frag,
@@ -117,14 +120,21 @@ export class TomoComponent implements OnInit {
       (e) => console.error(e)
     );
 
-    // loadStubData(StubImage3D.ct).then(
-    //   (x) => {
-    //     console.log(x);
-    //     this.setImage(x);
-    //   },
-    //   (e) => console.error(e)
-    // );
+    loadStubData(StubImage3D.ct).then(
+      (x) => {
+        console.log(x);
+        this.setImage(x);
+      },
+      (e) => console.error(e)
+    );
     loadColormap(Textures.gray).then();
+    // const array = new Float32Array(1000000);
+    // for (let i = 10000; i < 11000; i++) {
+    //   array[i] = 0.9;
+    // }
+    // const imageT = makeTexture3d(array, 100, 100, 100);
+    // this.shaderMaterial.uniforms.img.value = imageT;
+    // console.log(imageT)
   }
   setImage(img: Image3D) {
     // this.shaderMaterial.uniforms.img.value = img;

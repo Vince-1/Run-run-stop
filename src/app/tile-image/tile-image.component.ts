@@ -15,9 +15,10 @@ import {
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // import { StubImage3D, loadStubData } from '../share/stub.ts.bak';
 import { makeTexture3d, makeArray, transform16to32 } from '../share/utils';
-import { shaders } from '../share/shaders';
+import { shaders } from '../share/shader-fragments';
 import { fromEvent } from 'rxjs';
 import { StubImage3D, loadStubData } from '../share/stub';
+import { ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-tile-image',
@@ -58,13 +59,13 @@ export class TileImageComponent implements OnInit, OnDestroy {
     new PlaneBufferGeometry(window.innerWidth, window.innerHeight),
     this.shaderMaterial
   );
-  constructor() {
+  constructor(private ef: ElementRef) {
     const canvas = document.createElement('canvas');
     this.renderer = new WebGLRenderer({
       canvas: canvas,
       context: canvas.getContext('webgl2', { alpha: true, antialias: true }),
     });
-    document.body.appendChild(this.renderer.domElement);
+    this.ef.nativeElement.appendChild(this.renderer.domElement);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.camera.position.z = 1000;
@@ -85,7 +86,8 @@ export class TileImageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    loadStubData(StubImage3D.petHead).then(
+    // loadStubData(StubImage3D.petHead).then(
+    loadStubData(StubImage3D.mriHead).then(
       (x) => {
         console.log(x);
         this.shaderMaterial.uniforms.img.value = makeTexture3d(
@@ -113,7 +115,7 @@ export class TileImageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.
-    document.body.removeChild(this.renderer.domElement);
+    this.ef.nativeElement.removeChild(this.renderer.domElement);
   }
 
   animate() {

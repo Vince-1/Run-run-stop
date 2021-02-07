@@ -1,4 +1,5 @@
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { ElementRef } from '@angular/core';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { fromEvent } from 'rxjs';
 import {
@@ -49,7 +50,7 @@ export class DanceComponent implements OnInit, OnDestroy {
     new BoxGeometry(10, 10, 10),
     new MeshBasicMaterial({ side: DoubleSide, color: new Color('red') })
   );
-  constructor() {
+  constructor(private ef: ElementRef) {
     const canvas = document.createElement('canvas');
     this.renderer = new WebGLRenderer({
       canvas,
@@ -60,7 +61,7 @@ export class DanceComponent implements OnInit, OnDestroy {
       antialias: true,
     });
     this.renderer.shadowMap.enabled = true;
-    document.body.appendChild(this.renderer.domElement);
+    this.ef.nativeElement.appendChild(this.renderer.domElement);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -157,7 +158,7 @@ export class DanceComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // Called once, before the instance is destroyed.
     // Add 'implements OnDestroy' to the class.
-    document.body.removeChild(this.renderer.domElement);
+    this.ef.nativeElement.removeChild(this.renderer.domElement);
   }
   render() {
     this.renderer.render(this.scene, this.camera);

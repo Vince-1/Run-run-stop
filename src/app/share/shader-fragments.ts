@@ -166,11 +166,12 @@ export namespace shaders {
 
             float z_g = (row* grid.y + col + z * 10.0) / size.z;
 
-            vec4 texColor = (y_g < 0.9 && x_g < 0.9) ? texture(img,vec3(crop_x,crop_y,z_g)) : vec4(x,y,z,1.0);
+            vec4 texColor = (y_g < 0.9 && x_g < 0.9) ? vec4(texture(img,vec3(crop_x,crop_y,z_g)).xxx,1.0) : vec4(x,y,z,1.0);
             // vec4 texColor = texture(img,vec3(y_g,x_g,z_g));
             
             // vec4 texColor = texture(img,vec3(x,y,z));
             gl_FragColor = texColor;
+            // gl_FragColor = vec4(texColor.xxx,1.0);
             // gl_FragColor = vec4(x, y, z, 1.0);
           }
           `,
@@ -210,8 +211,55 @@ export namespace shaders {
       float level = max(min((texColor.r - window.x) / (window.y - window.x),1.0),0.0);
       vec4 cmColor = texture2D(colormap, vec2(level,0.5));
       gl_FragColor = cmColor;
+
+      // if(y > 0.5) {
+      //   gl_FragColor = vec4(0.5,0,0,1.0);
+      // }
   }
           `,
   };
+  export const singleImage3d = {
+    vertex: `
+          varying highp vec3 vTextureCoord;
+          uniform highp mat4 planAffine;
+          uniform highp mat4 planAffineInverse;
+          
+          void main(void) {
+            vec4 p = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            gl_Position = p;
+            // vTextureCoord = vec3( modelMatrix * vec4(position, 1.0));
+            vTextureCoord = (planAffine * vec4(position,1.0)).xyz;
+          }
+          `,
+    frag: `
+  
+    varying highp vec3 vTextureCoord;
+  
+    uniform highp sampler3D image;
+    uniform highp mat4 imageAffine;
+    uniform highp mat4 imageAffineInverse;
+    
+    uniform highp mat4 planeAffine;
+    uniform highp mat4 planeAffineInverse;
+  
+    uniform highp sampler2D colormap;
+    uniform highp vec2 window;
+  
+  
+    void main() {
+      
+      vec3 sampleCoord = (imageAffineInverse * vec4(vTextureCoord,1.0)).xyz + 0.5;
+      vec4 texColor = texture(image,sampleCoord);
+      float level = max(min((texColor.r - window.x) / (window.y - window.x),1.0),0.0);
+      vec4 cmColor = texture2D(colormap,vec2(level,0.5));
+      
+      vec4 grayColor = vec4(level,level,level,level);
+
+      // bool t = level > 1000.0;
+      gl_FragColor = cmColor;
+      gl_FragColor = grayColor;
+
+    }
+          `,
+  };
 }
-                  
