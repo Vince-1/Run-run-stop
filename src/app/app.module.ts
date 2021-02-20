@@ -28,6 +28,7 @@ import { PointSourceModule } from './boundingbox-point-source/point-source.modul
 import { TomoComponent } from './tomo/tomo.component';
 import { DanceComponent } from './dance/dance.component';
 import { AudioPlayerComponent } from './audio-player/audio-player.component';
+import { SigleCanvasComponent } from './sigle-canvas/sigle-canvas.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { AudioPlayerComponent } from './audio-player/audio-player.component';
     CameraFocusComponent,
     WireframComponent,
     TestPlanegeometryComponent,
+    SigleCanvasComponent,
   ],
  
   imports: [
@@ -75,6 +77,7 @@ import { AudioPlayerComponent } from './audio-player/audio-player.component';
         component: TomoComponent,
       },
       { path: 'dance', component: DanceComponent },
+      {path:'sigleCanvas',component:SigleCanvasComponent},
     ]),
   ],
   providers: [],

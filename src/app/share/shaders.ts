@@ -206,10 +206,19 @@ export namespace shaders {
       float y = (vTextureCoord.y - center.y ) / windowSize.y + 0.5;
       // float z = (vTextureCoord.z - center.z ) / 1000.0 + 0.5;
       float z = slicer / shape.z;
-      vec4 texColor = texture(img,vec3(x,y,z));
+      vec4 texColor = texture(img,vec3(x,z,y));
       float level = max(min((texColor.r - window.x) / (window.y - window.x),1.0),0.0);
       vec4 cmColor = texture2D(colormap, vec2(level,0.5));
       gl_FragColor = cmColor;
+
+      // mat4 a = mat4(1.0);
+      // if(a[0][0]==0.0){
+      //   gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+      // }
+      // else{
+      //   gl_FragColor = vec4(0.0,1.0,0.0,1.0);
+      // }
+
   }
           `,
   };

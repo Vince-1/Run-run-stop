@@ -42,9 +42,11 @@ export class TomoComponent implements OnInit {
     window.innerHeight / 2
   );
 
-  tx = 2048;
-  ty = 2048;
-  tz = 100;
+  tx = 100;
+  ty = 1024;
+  tz = 4096;
+  data = makeArray(this.tx * this.ty * this.tz, 'random');
+  
 
   renderer: WebGLRenderer;
   orbit: OrbitControls;
@@ -55,7 +57,7 @@ export class TomoComponent implements OnInit {
     uniforms: {
       img: {
         value: makeTexture3d(
-          makeArray(this.tx * this.ty * this.tz, 'random'),
+          this.data,
           this.tx,
           this.ty,
           this.tz
@@ -65,11 +67,11 @@ export class TomoComponent implements OnInit {
         value: new TextureLoader().load('assets/textures/cm_petct.png'),
       },
       center: { value: new Vector3(0, 0, 0) },
-      shape: { value: new Vector3(this.tx, this.ty, this.tz) },
+      shape: { value: new Vector3(this.tx, this.tz, this.ty) },
       pixelSize: { value: new Vector3(1, 1, 1) },
       window: { value: new Vector2(0, 1) },
       windowSize: {
-        value: new Vector2(this.width, this.height),
+        value: new Vector2(this.tx, this.tz),
       },
       view: { value: 0 }, // 0,1,2 = xy,yz,xz
       slicer: { value: 5.0 },
@@ -83,7 +85,7 @@ export class TomoComponent implements OnInit {
     side: DoubleSide,
   });
   plane = new Mesh(
-    new PlaneBufferGeometry(window.innerWidth, window.innerHeight),
+    new PlaneBufferGeometry(this.tx, this.tz),
     // this.redMaterial
     this.shaderMaterial
   );
@@ -91,9 +93,13 @@ export class TomoComponent implements OnInit {
   constructor(private ef: ElementRef, rendererFactory: RendererFactory2) {
     const renderer2 = rendererFactory.createRenderer(null, null);
     const canvas = renderer2.createElement('canvas') as HTMLCanvasElement;
+    const context = canvas.getContext('webgl2', {
+      alpha: true,
+      antialias: true,
+    });
     this.renderer = new WebGLRenderer({
       canvas: canvas,
-      context: canvas.getContext('webgl2', { alpha: true, antialias: true }),
+      context: context,
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -125,6 +131,13 @@ export class TomoComponent implements OnInit {
     //   (e) => console.error(e)
     // );
     loadColormap(Textures.gray).then();
+    console.log(this.shaderMaterial.uniforms.img.value);
+
+    let a = new Float32Array(209715200);
+      for (let i = 0;i<=209715200;i++){
+        a[i]=this.data[i];
+      }
+      this.shaderMaterial.uniforms.img.value =makeTexture3d(a,this.tx,this.ty,2048);
   }
   setImage(img: Image3D) {
     // this.shaderMaterial.uniforms.img.value = img;
