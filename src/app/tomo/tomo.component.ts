@@ -16,7 +16,12 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { shaders } from '../share/shaders';
-import { makeTexture3d, makeArray, transform16to32 } from '../share/utils';
+import {
+  makeTexture3d,
+  makeArray,
+  transform16to32,
+  makeTexture2d,
+} from '../share/utils';
 import {
   loadStubData,
   StubImage3D,
@@ -25,6 +30,7 @@ import {
 } from '../share/stub';
 import { Image3D } from '../share/image3d';
 import { fromEvent } from 'rxjs';
+import { Matrix4 } from 'three';
 
 @Component({
   selector: 'app-tomo',
@@ -43,10 +49,8 @@ export class TomoComponent implements OnInit {
   );
 
   tx = 100;
-  ty = 1024;
-  tz = 4096;
-  data = makeArray(this.tx * this.ty * this.tz, 'random');
-  
+  ty = 100;
+  tz = 100;
 
   renderer: WebGLRenderer;
   orbit: OrbitControls;
@@ -57,17 +61,63 @@ export class TomoComponent implements OnInit {
     uniforms: {
       img: {
         value: makeTexture3d(
-          this.data,
+          makeArray(this.tx * this.ty * this.tz, 'linear'),
           this.tx,
           this.ty,
           this.tz
         ),
       },
+      imgs: {
+        value: [
+          makeTexture3d(
+            makeArray(this.tx * this.ty * this.tz, 'random'),
+            this.tx,
+            this.ty,
+            this.tz
+          ),
+          makeTexture3d(
+            makeArray(this.tx * this.ty * this.tz, 'linear'),
+            this.tx,
+            this.ty,
+            this.tz
+          ),
+        ],
+      },
+      xxx: {
+        value: [
+          {
+            image: makeTexture3d(
+              makeArray(this.tx * this.ty * this.tz, 'random'),
+              this.tx,
+              this.ty,
+              this.tz
+            ),
+            affines: new Matrix4(),
+          },
+        ],
+      },
+      imgss: {
+        value: [
+          makeTexture2d(
+            makeArray(this.tx * this.ty, 'random'),
+            this.tx,
+            this.ty
+          ),
+          makeTexture2d(
+            makeArray(this.tx * this.ty, 'random'),
+            this.tx,
+            this.ty
+          ),
+        ],
+      },
+      test: { value: [1.0, 2.0, 3.0] },
+      textM4: { value: new Matrix4() },
       colormap: {
         value: new TextureLoader().load('assets/textures/cm_petct.png'),
       },
       center: { value: new Vector3(0, 0, 0) },
-      shape: { value: new Vector3(this.tx, this.tz, this.ty) },
+      shape: { value: new Vector3(this.tx, this.ty, this.tz) },
+      // shape: { value: new Vector3(500,500,10) },
       pixelSize: { value: new Vector3(1, 1, 1) },
       window: { value: new Vector2(0, 1) },
       windowSize: {
@@ -89,22 +139,28 @@ export class TomoComponent implements OnInit {
     // this.redMaterial
     this.shaderMaterial
   );
+  
 
   constructor(private ef: ElementRef, rendererFactory: RendererFactory2) {
     const renderer2 = rendererFactory.createRenderer(null, null);
     const canvas = renderer2.createElement('canvas') as HTMLCanvasElement;
-    const context = canvas.getContext('webgl2', {
+    const context: WebGL2RenderingContext = canvas.getContext('webgl2', {
       alpha: true,
       antialias: true,
     });
+    console.log(context);
+    console.log(new Matrix4());
     this.renderer = new WebGLRenderer({
       canvas: canvas,
       context: context,
     });
+
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.camera.position.z = 1000;
     // this.camera.up = new Vector3(0, -1, 0);
+    // this.plane.translateZ(10);
+    console.log(this.plane);
     this.scene.add(this.plane);
     this.renderer.render(this.scene, this.camera);
   }
@@ -131,13 +187,7 @@ export class TomoComponent implements OnInit {
     //   (e) => console.error(e)
     // );
     loadColormap(Textures.gray).then();
-    console.log(this.shaderMaterial.uniforms.img.value);
-
-    let a = new Float32Array(209715200);
-      for (let i = 0;i<=209715200;i++){
-        a[i]=this.data[i];
-      }
-      this.shaderMaterial.uniforms.img.value =makeTexture3d(a,this.tx,this.ty,2048);
+    this.shaderMaterial.needsUpdate = true;
   }
   setImage(img: Image3D) {
     // this.shaderMaterial.uniforms.img.value = img;
@@ -149,6 +199,7 @@ export class TomoComponent implements OnInit {
     );
     this.shaderMaterial.uniforms.pixelSize.value = img.pixelSize;
     this.shaderMaterial.uniforms.shape.value = img.shape;
+    this.shaderMaterial.uniforms.window.value = new Vector2(0, 2);
   }
   setColormap(c: Texture) {}
   render() {
