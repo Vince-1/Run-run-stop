@@ -1,23 +1,22 @@
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { ElementRef } from '@angular/core';
 import { RendererFactory2 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
+import { fromEvent, interval } from 'rxjs';
 import {
-  BoxBufferGeometry,
   Color,
   DoubleSide,
-  Matrix4,
   Mesh,
   MeshBasicMaterial,
   OrthographicCamera,
   PlaneBufferGeometry,
+  Raycaster,
   Scene,
   ShaderMaterial,
   WebGLRenderer,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { tomoShader } from '../share/shader';
-import { shaders } from '../share/shader-fragments';
+import * as L from 'lodash';
 
 @Component({
   selector: 'app-image-grid',
@@ -39,7 +38,7 @@ export class ImageGridComponent implements OnInit {
   canvas: HTMLCanvasElement;
   contex: WebGL2RenderingContext;
 
-  shader1 = new ShaderMaterial(tomoShader);
+  shader1 = new ShaderMaterial(tomoShader());
   plane1 = new Mesh(
     new PlaneBufferGeometry(100, 100),
     // new MeshBasicMaterial({ color: new Color('red'), side: DoubleSide })
@@ -49,6 +48,8 @@ export class ImageGridComponent implements OnInit {
     new PlaneBufferGeometry(100, 100),
     new MeshBasicMaterial({ color: new Color('yellow'), side: DoubleSide })
   );
+
+  raycaster = new Raycaster();
 
   constructor(private ef: ElementRef, rendererFactory: RendererFactory2) {
     const renderer2 = rendererFactory.createRenderer(null, null);
@@ -60,31 +61,67 @@ export class ImageGridComponent implements OnInit {
     this.renderer = new WebGLRenderer({
       canvas: this.canvas,
       context: this.contex,
+      // antialias: true,
+      // alpha: true,
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.camera.position.z = 10;
+    this.renderer.setClearColor(new Color('black'));
     this.renderer.render(this.scene, this.camera);
     this.ef.nativeElement.appendChild(this.renderer.domElement);
 
-    this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
+    // this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
+
     this.scene.add(this.plane1);
     this.scene.add(this.plane2);
-    this.animate();
   }
 
   ngOnInit(): void {
+    console.log(L.isEqual({ x: 100, y: 50 }, { x: 100, y: 100 }));
+
+    this.animate();
     this.plane1.position.set(300, 0, 0);
-    const a = new Matrix4().makeScale(100, 1, 1);
-    console.log( a.invert());
-    console.log(a);
-    console.log(this.shader1.uniforms.planAffineInverse.value);
+
+    // fromEvent(this.ef.nativeElement, 'mousedown').subscribe(
+    //   (e: MouseEvent) => {
+    //     // const coord = new Vector2(
+    //     //   (e.offsetX / window.innerWidth) * 2 - 1,
+    //     //   -(e.offsetY / window.innerHeight) * 2 + 1
+    //     // );
+    //     const coord = new Vector2(0, 0);
+    //     this.raycaster.setFromCamera(coord, this.camera);
+    //     const intersection = this.raycaster.intersectObject(this.plane2);
+    //     console.log(e, coord, intersection);
+    //     if (intersection.length > 0) {
+    //       intersection.forEach((i) => {
+    //         console.log(i.distanceToRay);
+    //         console.log(i.object);
+    //       });
+    //     }
+    //   },
+    //   (e) => console.error(e)
+    // );
+
+    // const a = interval(10000);
+    // fromEvent(this.ef.nativeElement, 'mousedown')
+    //   .pipe(withLatestFrom(a))
+    //   .subscribe(
+    //     (x) => console.log(x),
+    //     (e) => console.log(e)
+    //   );
   }
   render() {
     this.renderer.render(this.scene, this.camera);
+    // this.renderer.render(this.scene, this.cameraArray);
   }
   animate() {
     requestAnimationFrame(() => this.animate());
     this.render();
+  }
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.ef.nativeElement.removeChild(this.renderer.domElement);
   }
 }

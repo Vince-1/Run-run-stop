@@ -249,16 +249,22 @@ export namespace shaders {
     void main() {
       
       vec3 sampleCoord = (imageAffineInverse * vec4(vTextureCoord,1.0)).xyz + 0.5;
-      vec4 texColor = texture(image,sampleCoord);
+      vec4 texColor = texture(image,vec3(sampleCoord.xy,0.5));
       float level = max(min((texColor.r - window.x) / (window.y - window.x),1.0),0.0);
       vec4 cmColor = texture2D(colormap,vec2(level,0.5));
       
-      vec4 grayColor = vec4(level,level,level,level);
+      vec4 grayColor = vec4(level,level,level,1.0);
 
-      // bool t = level > 1000.0;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
       gl_FragColor = cmColor;
-      gl_FragColor = grayColor;
+      // gl_FragColor = grayColor;
+      // gl_FragColor = texColor;
 
+      // bool t = level > 0.0;
+      // if(t) {
+      //   gl_FragColor = vec4(0.5,0.0,0.0,1.0);
+      // }
+      
     }
           `,
   };

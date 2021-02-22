@@ -62,7 +62,7 @@ export class TileImageComponent implements OnInit, OnDestroy {
   constructor(private ef: ElementRef) {
     const canvas = document.createElement('canvas');
     this.renderer = new WebGLRenderer({
-      canvas: canvas,
+      canvas,
       context: canvas.getContext('webgl2', { alpha: true, antialias: true }),
     });
     this.ef.nativeElement.appendChild(this.renderer.domElement);
@@ -113,8 +113,6 @@ export class TileImageComponent implements OnInit, OnDestroy {
     );
   }
   ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
     this.ef.nativeElement.removeChild(this.renderer.domElement);
   }
 
