@@ -5,6 +5,7 @@ import { loadStubData, StubImage3D } from '../share/stub';
 import { makeArray, makeTexture3d, transform16to32 } from '../share/utils';
 import { createDrag } from '../share/drag';
 import { fromEvent } from 'rxjs';
+import { Slider } from '../share/direction';
 
 @Component({
   selector: 'app-sigle-canvas',
@@ -41,9 +42,10 @@ export class SigleCanvasComponent implements OnInit {
 
   rotation: number = 0;
   scale: number = 1;
-  z: number = 100;
+  z: number = 10;
   trans = new Vector3(0, 0, 0);
   keydown = 1;
+  slider: Slider = Slider.reedom;
   constructor() {
     loadStubData(StubImage3D.ct).then((x) => {
       console.log(x);
@@ -54,7 +56,13 @@ export class SigleCanvasComponent implements OnInit {
         x.shape.z
       );
     });
-    this.planeAffine(this.rotation, this.scale, this.z, this.trans);
+    this.planeAffine(
+      this.rotation,
+      this.scale,
+      this.z,
+      this.trans,
+      this.slider
+    );
     // this.rotation = Math.PI * 0.2;
     let imageAffineStandard = new Matrix4();
     imageAffineStandard.set(
@@ -157,7 +165,13 @@ export class SigleCanvasComponent implements OnInit {
           );
         }
 
-        this.planeAffine(this.rotation, this.scale, this.z, this.trans);
+        this.planeAffine(
+          this.rotation,
+          this.scale,
+          this.z,
+          this.trans,
+          this.slider
+        );
       }
     });
   }
@@ -231,38 +245,126 @@ export class SigleCanvasComponent implements OnInit {
     console.log(this.camera);
   }
 
-  planeAffine(rotation: number, scale: number, z: number, trans: Vector3) {
+  planeAffine(
+    rotation: number,
+    scale: number,
+    z: number,
+    trans: Vector3,
+    slider: Slider
+  ) {
     let operation1 = new Matrix4();
     let operation2 = new Matrix4();
     let operation3 = new Matrix4();
     let operation4 = new Matrix4();
     let operationToxyz = new Matrix4();
 
-    operation1 = operation1.makeRotationZ(rotation);
-    operation2 = operation2.makeTranslation(0, 0, z);
-    operation3 = operation3.makeScale(scale, scale, scale);
-    operation4 = operation4.makeTranslation(
-      trans.x * this.scale,
-      trans.y * this.scale,
-      trans.z * this.scale
-    );
-    operationToxyz = operationToxyz.makeRotationZ(0);
-    // operation4 = operation4.makeTranslation(trans.x, trans.y, trans.z);
-    const planAffine = multiMatrix4([
-      // operationToxyz,
-      operation4,
-      operation2,
-      operation1,
-      operationToxyz,
-      operation3,
-     
-    ]);
-  
+    switch (slider) {
+      case 'y': {
+        operation1 = operation1.makeRotationY(rotation);
+        operation2 = operation2.makeTranslation(0, z, 0);
+        operation3 = operation3.makeScale(scale, -scale, scale);
+        operation4 = operation4.makeTranslation(
+          trans.x * this.scale,
+          trans.z * this.scale,
+          -trans.y * this.scale
+        );
+        operationToxyz = operationToxyz.makeRotationX(Math.PI * 0.5);
+        const planAffine = multiMatrix4([
+          // operationToxyz,
+          operation4,
+          operation2,
+          operation1,
+          operationToxyz,
+          operation3,
+        ]);
+    
+        this.material.uniforms.planAffine.value = planAffine;
+        break;
+      }
 
-    this.material.uniforms.planAffine.value = planAffine;
+      case 'z': {
+        operation1 = operation1.makeRotationZ(rotation);
+        operation2 = operation2.makeTranslation(0, 0, z);
+        operation3 = operation3.makeScale(scale, scale, scale);
+        operation4 = operation4.makeTranslation(
+          trans.x * this.scale,
+          trans.y * this.scale,
+          trans.z * this.scale
+        );
+        operationToxyz = operationToxyz.makeRotationZ(Math.PI * 0.0);
+        const planAffine = multiMatrix4([
+          // operationToxyz,
+          operation4,
+          operation2,
+          operation1,
+          operationToxyz,
+          operation3,
+        ]);
+    
+        this.material.uniforms.planAffine.value = planAffine;
+        break;
+      }
+
+      case 'x': {
+        operation1 = operation1.makeRotationX(rotation);
+        operation2 = operation2.makeTranslation(z, 0, 0);
+        operation3 = operation3.makeScale(scale, scale, scale);
+        operation4 = operation4.makeTranslation(
+          trans.z * this.scale,
+          trans.y * this.scale,
+          -trans.x * this.scale
+        );
+        operationToxyz = operationToxyz.makeRotationY(Math.PI * 0.5);
+        const planAffine = multiMatrix4([
+          // operationToxyz,
+          operation4,
+          operation2,
+          operation1,
+          operationToxyz,
+          operation3,
+        ]);
+    
+        this.material.uniforms.planAffine.value = planAffine;
+        break;
+      }
+
+      case 'reedom': {
+        let rotateX = Math.PI*0.5;
+        let rotateY = Math.PI*0.0;
+        // operation1 = operation1.makeRotationX(rotateX);
+        operation1 = operation1.makeRotationZ(rotation);
+        operation2 = operation2.makeTranslation(0, 0, 0);
+        operation3 = operation3.makeScale(scale, scale, scale);
+        operation4 = operation4.makeTranslation(
+          trans.x * this.scale *Math.cos(rotateY),
+          trans.y * this.scale*Math.cos(rotateX),
+          trans.y * this.scale*Math.sin(rotateX)-trans.x *this.scale*Math.sin(rotateY)
+        );
+        const operationToY = new Matrix4().makeRotationY(rotateY);
+        const operationToX = new Matrix4().makeRotationX(rotateX);
+
+
+
+
+       
+        const planAffine = multiMatrix4([
+          // operationToxyz,
+          operation4,
+          operation2,
+          operationToY,
+          operationToX,
+          operation1,
+          operation3,
+        ]);
+    
+        this.material.uniforms.planAffine.value = planAffine;
+        break;
+      }
+    }
+    // operation4 = operation4.makeTranslation(trans.x, trans.y, trans.z);
+    
   }
 
-  
   render() {
     requestAnimationFrame(() => {
       this.render();
@@ -320,7 +422,7 @@ void main() {
 
 vec3 sampleCoord = (imageAffineInverse * vec4(vTextureCoord,1.0)).xyz +0.5;
 
-if(sampleCoord.x>0.0 && sampleCoord.y>0.0 && sampleCoord.x <1.0 && sampleCoord.y<1.0){
+if(sampleCoord.x>0.0 && sampleCoord.y>0.0 && sampleCoord.x <1.0 && sampleCoord.y<1.0&& sampleCoord.z>0.0 && sampleCoord.z<1.0){
   float tex= texture(img,vec3(sampleCoord.x,sampleCoord.y,sampleCoord.z)).r;
 
   gl_FragColor = vec4(tex,tex,tex,tex);
@@ -329,7 +431,7 @@ if(sampleCoord.x>0.0 && sampleCoord.y>0.0 && sampleCoord.x <1.0 && sampleCoord.y
 }
 
 
-// if(vTextureCoord.x>0.0){
+// if(vTextureCoord.z>0.0){
 //   gl_FragColor = vec4(1.0,0.0,0.0,1.0);
 // }
 

@@ -4,6 +4,13 @@ export enum Image3DThreeView {
   Sagittal = 'Sagittal',
 }
 
+export enum Slider {
+  x= 'x',
+  y = 'y',
+  z='z',
+  reedom = 'reedom'
+}
+
 export function viewToNumber(v: Image3DThreeView): number {
   switch (v) {
     case Image3DThreeView.Transverse:
