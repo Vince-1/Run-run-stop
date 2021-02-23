@@ -1,6 +1,20 @@
 import { Component, OnInit, ɵConsole } from '@angular/core';
 import * as THREE from 'three';
-import { DoubleSide, Matrix4, Vector2, Vector3, Vector4 } from 'three';
+import {
+  BufferGeometry,
+  Color,
+  DoubleSide,
+  FrontSide,
+  Group,
+  Line,
+  LineBasicMaterial,
+  LineDashedMaterial,
+  Matrix4,
+  Mesh,
+  Vector2,
+  Vector3,
+  Vector4,
+} from 'three';
 import { loadStubData, StubImage3D } from '../share/stub';
 import { makeArray, makeTexture3d, transform16to32 } from '../share/utils';
 import { createDrag } from '../share/drag';
@@ -35,9 +49,11 @@ export class SigleCanvasComponent implements OnInit {
       imageAffineInverse: { value: new Matrix4() },
     },
     side: DoubleSide,
+    transparent:true,
     vertexShader: vertex,
     fragmentShader: frag,
   });
+  
   mesh = new THREE.Mesh(this.geometry, this.material);
 
   rotation: number = 0;
@@ -46,7 +62,54 @@ export class SigleCanvasComponent implements OnInit {
   trans = new Vector3(0, 0, 0);
   keydown = 1;
   slider: Slider = Slider.reedom;
+  line1material = new LineDashedMaterial({
+    color: new Color(1.0, 0, 0),
+    linewidth: 40,
+    dashSize:40,
+    gapSize:40,
+    transparent:true,
+    opacity:1.0,
+    side:FrontSide
+  });
+  line1geometry = new BufferGeometry().setFromPoints([
+    new Vector3(0, 0, -500),
+    new Vector3(0, 0, 500),
+  ]);
 
+  line2material = new LineDashedMaterial({
+    color: new Color(0, 1.0, 0),
+    linewidth: 40,
+    dashSize:40,
+    gapSize:40,
+    transparent:true,
+    opacity:0.5,
+    side:DoubleSide
+  });
+  line2geometry = new BufferGeometry().setFromPoints([
+    new Vector3(-500, 0, 0),
+    new Vector3(500, 0, 0),
+  ]);
+
+  line3material = new LineDashedMaterial({
+    color: new Color(0, 0, 1.0),
+    linewidth: 40,
+    dashSize:40,
+    gapSize:40,
+    transparent:true,
+    opacity:1.0,
+    side:DoubleSide
+  });
+  line3geometry = new BufferGeometry().setFromPoints([
+    new Vector3(0, -500, 0),
+    new Vector3(0, 500, 0),
+  ]);
+
+  line1Mesh = new Line(this.line1geometry, this.line1material);
+  line2Mesh = new Line(this.line2geometry, this.line2material);
+  line3Mesh = new Line(this.line3geometry, this.line3material);
+
+  meshGroup = new Group();
+  
   constructor() {
     loadStubData(StubImage3D.ct).then((x) => {
       console.log(x);
@@ -244,6 +307,12 @@ export class SigleCanvasComponent implements OnInit {
     document.body.appendChild(this.renderer.domElement);
     this.mesh.position.set(0, 0, 0);
     this.scene.add(this.mesh);
+
+    this.meshGroup.add(this.line1Mesh,this.line2Mesh,this.line3Mesh);
+    this.meshGroup.rotateX(Math.PI*0.25);
+    this.meshGroup.rotateOnWorldAxis(new Vector3(0,1,1),Math.PI*0.25);
+
+    this.scene.add(this.meshGroup);
     this.camera.position.set(0, 0, 100);
     this.camera.lookAt(0.0, 0, 0);
 
@@ -380,8 +449,7 @@ export class SigleCanvasComponent implements OnInit {
     // operation4 = operation4.makeTranslation(trans.x, trans.y, trans.z);
   }
 
-  planeAffineWhole(
-    select: {
+  planeAffineWhole(select: {
     scale: number;
     rotate: number;
     rotateX: number;
@@ -522,7 +590,7 @@ if(sampleCoord.x>0.0 && sampleCoord.y>0.0 && sampleCoord.x <1.0 && sampleCoord.y
 
   gl_FragColor = vec4(tex,tex,tex,tex);
 }else{
-  gl_FragColor = vec4(1.0,1.0,0.0,1.0);
+  gl_FragColor = vec4(1.0,1.0,0.0,0.5);
 }
 
 
