@@ -13,7 +13,6 @@ import {
   Mesh,
   Vector2,
   Vector3,
-  Vector4,
 } from 'three';
 import { loadStubData, StubImage3D } from '../share/stub';
 import { makeArray, makeTexture3d, transform16to32 } from '../share/utils';

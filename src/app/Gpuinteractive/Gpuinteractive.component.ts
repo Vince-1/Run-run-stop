@@ -3,7 +3,7 @@ import { GPUComputationRenderer, Variable } from 'three/examples/jsm/misc/GPUCom
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
-import { VertexColors, ShaderMaterial, Vector2 } from 'three';
+import {  ShaderMaterial, Vector2 } from 'three';
 import { map, mapTo, takeUntil, switchMap, scan } from 'rxjs/operators';
 import { fromEvent, Subject, merge, Observable } from 'rxjs';
 import { Raycaster, Vector3, Object3D } from 'three';
