@@ -23,8 +23,9 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { fromEvent, throwError } from 'rxjs';
-import { shaders } from '../share/shaders';
+import { shaders } from '../share/shader-fragments';
 import { makeTexture3d, makeArray, makeTexture2d } from '../share/utils';
+import { ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-conway-life-game',
@@ -72,10 +73,10 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
     depthBuffer: true,
   });
 
-  tx = 16384;
-  ty = 16385;
+  tx = 1000;
+  ty = 1000;
 
-  constructor() {
+  constructor(private ef: ElementRef) {
     console.log(this.a, this.b);
     this.b -= 1;
     console.log(this.a, this.b);
@@ -90,7 +91,7 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
       canvas: canvas,
       context: context,
     });
-    document.body.appendChild(this.renderer.domElement);
+    ef.nativeElement.appendChild(this.renderer.domElement);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -173,7 +174,7 @@ export class ConwayLifeGameComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.
-    document.body.removeChild(this.renderer.domElement);
+    this.ef.nativeElement.removeChild(this.renderer.domElement);
   }
   animate() {
     requestAnimationFrame(() => this.animate());

@@ -13,6 +13,8 @@
     "deprecation": {
       "severity": "warning"
     },
+    "no-namespace": false,
+    "no-trailing-whitespace": false,
     "component-class-suffix": true,
     "contextual-lifecycle": true,
     "directive-class-suffix": true,

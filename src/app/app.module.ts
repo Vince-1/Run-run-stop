@@ -18,6 +18,10 @@ import { PointSourceModule } from './boundingbox-point-source/point-source.modul
 import { TomoComponent } from './tomo/tomo.component';
 import { DanceComponent } from './dance/dance.component';
 import { AudioPlayerComponent } from './audio-player/audio-player.component';
+import { GameComponent } from './game/game.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { ImageGridComponent } from './image-grid/image-grid.component';
+// import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
@@ -31,11 +35,14 @@ import { AudioPlayerComponent } from './audio-player/audio-player.component';
     TomoComponent,
     DanceComponent,
     AudioPlayerComponent,
+    GameComponent,
+    ImageGridComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     PointSourceModule,
+    FlexLayoutModule,
     // ToolsModule,
     RouterModule.forRoot([
       { path: 'soldiers', component: ModelsSoldierComponent },
@@ -52,6 +59,8 @@ import { AudioPlayerComponent } from './audio-player/audio-player.component';
         component: TomoComponent,
       },
       { path: 'dance', component: DanceComponent },
+      { path: 'game', component: GameComponent },
+      { path: 'image-grid', component: ImageGridComponent },
     ]),
   ],
   providers: [],

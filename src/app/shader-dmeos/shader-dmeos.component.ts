@@ -28,8 +28,9 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { fromEvent, throwError } from 'rxjs';
-import { shaders } from '../share/shaders';
+import { shaders } from '../share/shader-fragments';
 import { makeTexture2d, makeArray, makeTexture3d } from '../share/utils';
+import { ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-shader-dmeos',
@@ -56,13 +57,13 @@ export class ShaderDmeosComponent implements OnInit, OnDestroy {
     magFilter: NearestFilter,
   });
 
-  constructor() {
+  constructor(private ef: ElementRef) {
     const canvas = document.createElement('canvas');
     this.renderer = new WebGLRenderer({
       canvas: canvas,
       context: canvas.getContext('webgl2', { alpha: true, antialias: true }),
     });
-    document.body.appendChild(this.renderer.domElement);
+    this.ef.nativeElement.appendChild(this.renderer.domElement);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.render(this.scene, this.camera);
@@ -137,7 +138,7 @@ export class ShaderDmeosComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.
-    document.body.removeChild(this.renderer.domElement);
+    this.ef.nativeElement.removeChild(this.renderer.domElement);
   }
   animate() {
     requestAnimationFrame(() => this.animate());
