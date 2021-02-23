@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ɵConsole } from '@angular/core';
 import * as THREE from 'three';
-import { DoubleSide, Matrix4, Vector2, Vector3 } from 'three';
+import { DoubleSide, Matrix4, Vector2, Vector3, Vector4 } from 'three';
 import { loadStubData, StubImage3D } from '../share/stub';
 import { makeArray, makeTexture3d, transform16to32 } from '../share/utils';
 import { createDrag } from '../share/drag';
@@ -23,7 +23,7 @@ export class SigleCanvasComponent implements OnInit {
   );
   scene = new THREE.Scene();
   renderer = new THREE.WebGLRenderer();
-  geometry = new THREE.PlaneBufferGeometry(1000, 1000);
+  geometry = new THREE.PlaneBufferGeometry(1500, 1000);
   raycaster = new THREE.Raycaster();
   // material = new THREE.MeshBasicMaterial({color:new THREE.Color('red')});
   material = new THREE.ShaderMaterial({
@@ -42,10 +42,11 @@ export class SigleCanvasComponent implements OnInit {
 
   rotation: number = 0;
   scale: number = 1;
-  z: number = 10;
+  z: number = 0;
   trans = new Vector3(0, 0, 0);
   keydown = 1;
   slider: Slider = Slider.reedom;
+
   constructor() {
     loadStubData(StubImage3D.ct).then((x) => {
       console.log(x);
@@ -56,13 +57,13 @@ export class SigleCanvasComponent implements OnInit {
         x.shape.z
       );
     });
-    this.planeAffine(
-      this.rotation,
-      this.scale,
-      this.z,
-      this.trans,
-      this.slider
-    );
+    // this.planeAffine(
+    //   this.rotation,
+    //   this.scale,
+    //   this.z,
+    //   this.trans,
+    //   this.slider
+    // );
     // this.rotation = Math.PI * 0.2;
     let imageAffineStandard = new Matrix4();
     imageAffineStandard.set(
@@ -99,6 +100,13 @@ export class SigleCanvasComponent implements OnInit {
         this.scale += 0.1;
       }
     });
+
+    fromEvent(this.renderer.domElement, 'mousewheel').subscribe(
+      (event: MouseWheelEvent) => {
+        event.preventDefault();
+        this.z = this.z + event.deltaY / Math.abs(event.deltaY);
+      }
+    );
     // fromEvent(window.document, 'keyup').subscribe((e) => {
     //   if (!(e as KeyboardEvent).ctrlKey){
     //   this.keydown = 0;
@@ -164,14 +172,6 @@ export class SigleCanvasComponent implements OnInit {
             new Vector2(point1.x, point1.y)
           );
         }
-
-        this.planeAffine(
-          this.rotation,
-          this.scale,
-          this.z,
-          this.trans,
-          this.slider
-        );
       }
     });
   }
@@ -224,6 +224,12 @@ export class SigleCanvasComponent implements OnInit {
       cy: Cy + a.y,
       oy: Oy + a.y,
     };
+    // return {
+    //   cx: Cx ,
+    //   ox: Ox,
+    //   cy: Cy,
+    //   oy: Oy ,
+    // };
   }
 
   setCoords(point: Vector2) {
@@ -277,7 +283,7 @@ export class SigleCanvasComponent implements OnInit {
           operationToxyz,
           operation3,
         ]);
-    
+
         this.material.uniforms.planAffine.value = planAffine;
         break;
       }
@@ -300,7 +306,7 @@ export class SigleCanvasComponent implements OnInit {
           operationToxyz,
           operation3,
         ]);
-    
+
         this.material.uniforms.planAffine.value = planAffine;
         break;
       }
@@ -323,30 +329,40 @@ export class SigleCanvasComponent implements OnInit {
           operationToxyz,
           operation3,
         ]);
-    
+
         this.material.uniforms.planAffine.value = planAffine;
         break;
       }
 
       case 'reedom': {
-        let rotateX = Math.PI*0.5;
-        let rotateY = Math.PI*0.0;
-        // operation1 = operation1.makeRotationX(rotateX);
-        operation1 = operation1.makeRotationZ(rotation);
-        operation2 = operation2.makeTranslation(0, 0, 0);
-        operation3 = operation3.makeScale(scale, scale, scale);
-        operation4 = operation4.makeTranslation(
-          trans.x * this.scale *Math.cos(rotateY),
-          trans.y * this.scale*Math.cos(rotateX),
-          trans.y * this.scale*Math.sin(rotateX)-trans.x *this.scale*Math.sin(rotateY)
-        );
-        const operationToY = new Matrix4().makeRotationY(rotateY);
+        let rotateX = Math.PI * 0.25;
+        let rotateY = -Math.PI * 0.25;
+
+        const center = new Vector3(0, Math.cos(rotateX), Math.sin(rotateX));
+        console.log(center);
+        const operationToY = new Matrix4().makeRotationAxis(center, rotateY);
+        // const operationToY = new Matrix4().makeRotationY(rotateY);
         const operationToX = new Matrix4().makeRotationX(rotateX);
 
+        let trans1 = new Vector3(trans.x, trans.y, trans.z);
 
+        let a = trans1.applyMatrix4(operationToX);
+        let b = a.applyMatrix4(operationToY);
 
+        // operation1 = operation1.makeRotationX(rotateX);
+        operation1 = operation1.makeRotationZ(rotation);
+        operation2 = operation2.makeTranslation(0, 0, z);
+        operation3 = operation3.makeScale(scale, scale, scale);
+        operation4 = operation4.makeTranslation(
+          // trans.x * this.scale *Math.cos(rotateY),
+          // trans.y * this.scale*Math.cos(rotateX),
+          // trans.y * this.scale*Math.sin(rotateX)-trans.x *this.scale*Math.sin(rotateY)
+          // 0,0,0
+          b.x * this.scale,
+          b.y * this.scale,
+          b.z * this.scale
+        );
 
-       
         const planAffine = multiMatrix4([
           // operationToxyz,
           operation4,
@@ -356,19 +372,98 @@ export class SigleCanvasComponent implements OnInit {
           operation1,
           operation3,
         ]);
-    
+
         this.material.uniforms.planAffine.value = planAffine;
         break;
       }
     }
     // operation4 = operation4.makeTranslation(trans.x, trans.y, trans.z);
-    
+  }
+
+  planeAffineWhole(
+    select: {
+    scale: number;
+    rotate: number;
+    rotateX: number;
+    rotateY: number;
+    calibration: Vector3;
+    trans: Vector3;
+  }) {
+    const center = new Vector3(
+      0,
+      Math.cos(select.rotateX),
+      Math.sin(select.rotateX)
+    );
+    const operationToY = new Matrix4().makeRotationAxis(center, select.rotateY);
+    // const operationToY = new Matrix4().makeRotationY(rotateY);
+    const operationToX = new Matrix4().makeRotationX(select.rotateX);
+    let trans1 = new Vector3(select.trans.x, select.trans.y, select.trans.z);
+
+    let a = trans1.applyMatrix4(operationToX);
+    let b = a.applyMatrix4(operationToY);
+
+    // operation1 = operation1.makeRotationX(rotateX);
+    const operation1 = new Matrix4().makeRotationZ(select.rotate);
+    const operation2 = new Matrix4().makeTranslation(
+      select.calibration.x,
+      select.calibration.y,
+      select.calibration.z
+    );
+    const operation3 = new Matrix4().makeScale(
+      select.scale,
+      select.scale,
+      select.scale
+    );
+    const operation4 = new Matrix4().makeTranslation(
+      // trans.x * this.scale *Math.cos(rotateY),
+      // trans.y * this.scale*Math.cos(rotateX),
+      // trans.y * this.scale*Math.sin(rotateX)-trans.x *this.scale*Math.sin(rotateY)
+      // 0,0,0
+      b.x * this.scale,
+      b.y * this.scale,
+      b.z * this.scale
+    );
+
+    const planAffine = multiMatrix4([
+      operation4,
+      operation2,
+      operationToY,
+      operationToX,
+      operation1,
+      operation3,
+    ]);
+
+    this.material.uniforms.planAffine.value = planAffine;
   }
 
   render() {
     requestAnimationFrame(() => {
       this.render();
     });
+    // this.planeAffine(
+    //   this.rotation,
+    //   this.scale,
+    //   this.z,
+    //   this.trans,
+    //   this.slider
+    // );
+    // this.planeAffineWhole(
+    //   new Vector3(this.scale, this.scale, this.scale),
+    //   this.rotation,
+    //   Math.PI * 0.25,
+    //   -Math.PI * 0.25,
+    //   new Vector3(0, 0, this.z),
+    //   this.trans
+    // );
+    let x = {
+      scale: this.scale,
+      rotate: this.rotation,
+      rotateX: Math.PI * 0.25,
+      rotateY: -Math.PI * 0.25,
+      calibration: new Vector3(0, 0, this.z),
+      trans: this.trans,
+    };
+    this.planeAffineWhole(x);
     this.renderer.render(this.scene, this.camera);
   }
 }
