@@ -29,6 +29,10 @@ import { TomoComponent } from './tomo/tomo.component';
 import { DanceComponent } from './dance/dance.component';
 import { AudioPlayerComponent } from './audio-player/audio-player.component';
 import { SigleCanvasComponent } from './sigle-canvas/sigle-canvas.component';
+import { GameComponent } from './game/game.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { ImageGridComponent } from './image-grid/image-grid.component';
+// import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
@@ -48,12 +52,18 @@ import { SigleCanvasComponent } from './sigle-canvas/sigle-canvas.component';
     WireframComponent,
     TestPlanegeometryComponent,
     SigleCanvasComponent,
+    TomoComponent,
+    DanceComponent,
+    AudioPlayerComponent,
+    GameComponent,
+    ImageGridComponent,
   ],
  
   imports: [
     BrowserModule,
     FormsModule,
     PointSourceModule,
+    FlexLayoutModule,
     // ToolsModule,
     RouterModule.forRoot([
       { path: 'soldiers', component: ModelsSoldierComponent },
@@ -78,6 +88,8 @@ import { SigleCanvasComponent } from './sigle-canvas/sigle-canvas.component';
       },
       { path: 'dance', component: DanceComponent },
       {path:'sigleCanvas',component:SigleCanvasComponent},
+      { path: 'game', component: GameComponent },
+      { path: 'image-grid', component: ImageGridComponent },
     ]),
   ],
   providers: [],

@@ -5,6 +5,7 @@ import {
   LinearFilter,
   DataTexture,
   Matrix4,
+  NearestFilter,
 } from 'three';
 
 export function makeArray(
@@ -51,6 +52,8 @@ export function makeTexture3d(img: Float32Array, x = 100, y = 100, z = 1) {
   const texture = new DataTexture3D(img, x, y, z);
   texture.format = RedFormat;
   texture.type = FloatType;
+  // texture.magFilter = NearestFilter;
+  // texture.minFilter = NearestFilter;
   texture.magFilter = LinearFilter;
   texture.minFilter = LinearFilter;
   texture.unpackAlignment = 1;

@@ -1,39 +1,30 @@
-<nav>
-  <a class="button" routerLink="">main</a> |
-  <a class="button" routerLink="/soldiers">soldier</a> |
-  <a class="button" routerLink="/phoenix">phoenix</a> |
-  <a class="button" routerLink="/conway">conway life game</a> |
-  <a class="button" routerLink="/shader demo">shader cube demo</a> |
-  <a class="button" routerLink="/tile image">tile image</a>|
-  <a class="button" routerLink="/gpuinteractive">Gpu interactive</a>|
-  <a class="button" routerLink="/colorpicker">colorpicker</a>|
-  <a class="button" routerLink="/shader-colorpicker">shader-colorpicker</a>|
-  <a class="button" routerLink="/shader-colorpicker-gpu">shader-colorpicker-gpu</a>|
-  <a class="button" routerLink="/camera focus">camera-focus</a>|
-  <a class="button" routerLink="/testwirefram">testwireFram</a>|
-  <a class="button" routerLink="/testPlaneGeometry">plane2048</a>
-  <a class="button" routerLink="/boudingbox point source"
-    >boundingbox of point source</a
-  >
-  |
-  <a class="button" routerLink="/tomo"> tomo</a> |
-  <a class="button" routerLink="/dance">dance</a>|
-  <a class="button" routerLink="/sigleCanvas"> sigleCanvas</a> 
-  <!-- <button routerLink="/tile image">tile image</button>
-  <div class="select1">
-    <select #aa (change)="show(aa.value)">
-      <option value="/soldiers">soldier</option>
-      <option value="/phoenix">phoenix</option>
-      <option value="/conway">conway life game</option>
-      <option value="/shader demo">shader cube demo</option>
-      <option value="/tile image">tile image</option>
-    </select>
-    <button #aaa routerLink="{{ aa.value }}" (click)="show(aa.value)">
-      aa
-    </button>
+<!-- <div fxLayout="row" style="height: 100%;">
+  <div>asdasdsa</div>
+  <div>asdasdsa</div>
+</div> -->
+
+<div fxLayout="row">
+  <div fxFlex="10" fxLayout="column" id="demo memu">
+    demo menu
+    <div><a class="button" routerLink="">main</a></div>
+    <div><a class="button" routerLink="/soldiers">soldier</a></div>
+    <div><a class="button" routerLink="/phoenix">phoenix</a></div>
+    <div><a class="button" routerLink="/conway">conway life game</a></div>
+    <div><a class="button" routerLink="/shader demo">shader cube demo</a></div>
+    <div><a class="button" routerLink="/tile image">tile image</a></div>
+    <div>
+      <a class="button" routerLink="/boudingbox point source"
+        >boundingbox of point source</a
+      >
+    </div>
+    <div><a class="button" routerLink="/tomo"> tomo</a></div>
+    <div><a class="button" routerLink="/dance">dance</a></div>
+    <div><a class="button" routerLink="/game">game</a></div>
+    <div><a class="button" routerLink="/image-grid">image-grid</a></div>
   </div>
 
-  <div>routerLink = {{ aa.value }}</div> -->
-</nav>
-
-<router-outlet></router-outlet>
+  <div style="width: 85%" fxLayout="column">
+    demo view
+    <router-outlet></router-outlet>
+  </div>
+</div>

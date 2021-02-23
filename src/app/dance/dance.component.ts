@@ -1,11 +1,14 @@
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { Component, OnInit } from '@angular/core';
+import { ElementRef } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { fromEvent } from 'rxjs';
 import {
   BoxGeometry,
   Color,
   DirectionalLight,
   DoubleSide,
   Fog,
+  Group,
   HemisphereLight,
   Mesh,
   MeshBasicMaterial,
@@ -25,7 +28,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
   templateUrl: './dance.component.html',
   styleUrls: ['./dance.component.less'],
 })
-export class DanceComponent implements OnInit {
+export class DanceComponent implements OnInit, OnDestroy {
   scene = new Scene();
   camera = new PerspectiveCamera(
     50,
@@ -47,7 +50,7 @@ export class DanceComponent implements OnInit {
     new BoxGeometry(10, 10, 10),
     new MeshBasicMaterial({ side: DoubleSide, color: new Color('red') })
   );
-  constructor() {
+  constructor(private ef: ElementRef) {
     const canvas = document.createElement('canvas');
     this.renderer = new WebGLRenderer({
       canvas,
@@ -58,11 +61,11 @@ export class DanceComponent implements OnInit {
       antialias: true,
     });
     this.renderer.shadowMap.enabled = true;
-    document.body.appendChild(this.renderer.domElement);
+    this.ef.nativeElement.appendChild(this.renderer.domElement);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
-    this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
+    // this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
     this.camera.position.z = 10;
 
     this.floor.rotation.x = -0.5 * Math.PI;
@@ -85,9 +88,10 @@ export class DanceComponent implements OnInit {
 
   ngOnInit(): void {
     const saraLoader = new GLTFLoader();
+    let m: Group;
     saraLoader.load('assets/seraphine/scene.gltf', (gltf) => {
       console.log(gltf);
-      let model = gltf.scene;
+      const model = gltf.scene;
       // const o = model.children[0];
       // const explosionTexture = new TextureLoader().load(
       //   'assets/seraphine/textures/Mat_cwfyfr1_userboy17.bmp_diffuse.png'
@@ -113,12 +117,48 @@ export class DanceComponent implements OnInit {
         o.receiveShadow = true;
       });
       this.scene.add(model);
+      m = model;
     });
+    fromEvent(this.renderer.domElement, 'mousewheel').subscribe(
+      (x) => {
+        x.preventDefault();
+        console.log(x);
+      },
+      (e) => console.error(e)
+    );
+    fromEvent(window, 'keydown').subscribe(
+      (k: KeyboardEvent) => {
+        k.preventDefault();
+        // if (k.code === 'ArrowLeft') {
+        //   m.translateX(-1);
+        // }
+        switch (true) {
+          case k.code === 'KeyA' || k.code === 'ArrowLeft':
+            m.translateX(-1);
+            // this.camera.translateX(-1);
+            break;
+          case k.code === 'ArrowRight' || k.code === 'KeyD':
+            m.translateX(1);
+            break;
+          case k.code === 'ArrowUp' || k.code === 'KeyW':
+            m.translateY(1);
+            break;
+          case k.code === 'ArrowDown' || k.code === 'KeyS':
+            m.translateY(-1);
+            break;
+        }
+
+        // this.camera.lookAt(m.position);
+        console.log(m.position);
+        console.log(k.code);
+      },
+      (e) => console.error(e)
+    );
   }
   ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
-    document.body.removeChild(this.renderer.domElement);
+    // Called once, before the instance is destroyed.
+    // Add 'implements OnDestroy' to the class.
+    this.ef.nativeElement.removeChild(this.renderer.domElement);
   }
   render() {
     this.renderer.render(this.scene, this.camera);

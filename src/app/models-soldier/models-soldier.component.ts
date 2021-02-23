@@ -138,9 +138,9 @@ export class ModelsSoldierComponent implements OnInit {
 
     requestAnimationFrame(() => this.animate());
 
-    this.idleWeight = this.idleAction.getEffectiveWeight();
-    this.walkWeight = this.walkAction.getEffectiveWeight();
-    this.runWeight = this.runAction.getEffectiveWeight();
+    // this.idleWeight = this.idleAction.getEffectiveWeight();
+    // this.walkWeight = this.walkAction.getEffectiveWeight();
+    // this.runWeight = this.runAction.getEffectiveWeight();
 
     // Get the time elapsed since the last frame, used for mixer update (if not in single step mode)
 
