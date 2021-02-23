@@ -95,7 +95,7 @@ export class TomoComponent implements OnInit {
     const renderer2 = rendererFactory.createRenderer(null, null);
     const canvas = renderer2.createElement('canvas') as HTMLCanvasElement;
     this.renderer = new WebGLRenderer({
-      canvas: canvas,
+      canvas,
       context: canvas.getContext('webgl2', { alpha: true, antialias: true }),
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
