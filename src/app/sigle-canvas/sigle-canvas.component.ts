@@ -48,11 +48,11 @@ export class SigleCanvasComponent implements OnInit {
       imageAffineInverse: { value: new Matrix4() },
     },
     side: DoubleSide,
-    transparent:true,
+    transparent: true,
     vertexShader: vertex,
     fragmentShader: frag,
   });
-  
+
   mesh = new THREE.Mesh(this.geometry, this.material);
 
   rotation: number = 0;
@@ -64,11 +64,11 @@ export class SigleCanvasComponent implements OnInit {
   line1material = new LineDashedMaterial({
     color: new Color(1.0, 0, 0),
     linewidth: 40,
-    dashSize:40,
-    gapSize:40,
-    transparent:true,
-    opacity:1.0,
-    side:FrontSide
+    dashSize: 40,
+    gapSize: 40,
+    transparent: true,
+    opacity: 1.0,
+    side: FrontSide,
   });
   line1geometry = new BufferGeometry().setFromPoints([
     new Vector3(0, 0, -500),
@@ -78,11 +78,11 @@ export class SigleCanvasComponent implements OnInit {
   line2material = new LineDashedMaterial({
     color: new Color(0, 1.0, 0),
     linewidth: 40,
-    dashSize:40,
-    gapSize:40,
-    transparent:true,
-    opacity:0.5,
-    side:DoubleSide
+    dashSize: 40,
+    gapSize: 40,
+    transparent: true,
+    opacity: 0.5,
+    side: DoubleSide,
   });
   line2geometry = new BufferGeometry().setFromPoints([
     new Vector3(-500, 0, 0),
@@ -92,11 +92,11 @@ export class SigleCanvasComponent implements OnInit {
   line3material = new LineDashedMaterial({
     color: new Color(0, 0, 1.0),
     linewidth: 40,
-    dashSize:40,
-    gapSize:40,
-    transparent:true,
-    opacity:1.0,
-    side:DoubleSide
+    dashSize: 40,
+    gapSize: 40,
+    transparent: true,
+    opacity: 1.0,
+    side: DoubleSide,
   });
   line3geometry = new BufferGeometry().setFromPoints([
     new Vector3(0, -500, 0),
@@ -108,7 +108,7 @@ export class SigleCanvasComponent implements OnInit {
   line3Mesh = new Line(this.line3geometry, this.line3material);
 
   meshGroup = new Group();
-  
+
   constructor() {
     loadStubData(StubImage3D.ct).then((x) => {
       console.log(x);
@@ -307,9 +307,9 @@ export class SigleCanvasComponent implements OnInit {
     this.mesh.position.set(0, 0, 0);
     this.scene.add(this.mesh);
 
-    this.meshGroup.add(this.line1Mesh,this.line2Mesh,this.line3Mesh);
-    this.meshGroup.rotateX(Math.PI*0.25);
-    this.meshGroup.rotateOnWorldAxis(new Vector3(0,1,1),Math.PI*0.25);
+    this.meshGroup.add(this.line1Mesh, this.line2Mesh, this.line3Mesh);
+    this.meshGroup.rotateX(Math.PI * 0.25);
+    this.meshGroup.rotateOnWorldAxis(new Vector3(0, 1, 1), Math.PI * 0.25);
 
     this.scene.add(this.meshGroup);
     this.camera.position.set(0, 0, 100);
@@ -525,9 +525,11 @@ export class SigleCanvasComponent implements OnInit {
     let x = {
       scale: this.scale,
       rotate: this.rotation,
-      rotateX: Math.PI * 0.25,
-      rotateY: -Math.PI * 0.25,
-      calibration: new Vector3(0, 0, this.z),
+      // rotateX: Math.PI * 0.25,
+      rotateY: -Math.PI * 0.5,
+      rotateX: Math.PI * 0,
+      // rotateY: -Math.PI * 0,
+      calibration: new Vector3(this.z, 0, 0),
       trans: this.trans,
     };
     this.planeAffineWhole(x);
