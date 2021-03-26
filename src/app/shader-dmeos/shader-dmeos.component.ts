@@ -25,6 +25,13 @@ import {
   DataTexture3D,
   BoxBufferGeometry,
   Vector2,
+  BufferGeometry,
+  BufferAttribute,
+  AxesHelper,
+  Points,
+  PointsMaterial,
+  LineBasicMaterial,
+  Line,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { fromEvent, throwError } from 'rxjs';
@@ -60,7 +67,7 @@ export class ShaderDmeosComponent implements OnInit, OnDestroy {
   constructor(private ef: ElementRef) {
     const canvas = document.createElement('canvas');
     this.renderer = new WebGLRenderer({
-      canvas: canvas,
+      canvas,
       context: canvas.getContext('webgl2', { alpha: true, antialias: true }),
     });
     this.ef.nativeElement.appendChild(this.renderer.domElement);
@@ -119,8 +126,95 @@ export class ShaderDmeosComponent implements OnInit, OnDestroy {
     // this.scene.background = new Color('black');
     this.renderer.render(this.scene, this.camera);
 
-    this.scene.add(this.cube);
+    // this.scene.add(this.cube);
+    this.scene.add(new AxesHelper(1000));
+    const g = new BufferGeometry();
+    const vertices = new Float32Array([
+      0,
+      0,
+      0,
+      50,
+      0,
+      0,
+      0,
+      100,
+      0,
+      0,
+      0,
+      10,
+      0,
+      0,
+      100,
+      50,
+      0,
+      10,
+    ]);
+    const attribute = new BufferAttribute(vertices, 3);
+    g.attributes.position = attribute;
+    const colors = new Float32Array([
+      1,
+      0,
+      0, // 顶点1颜色
+      0,
+      1,
+      0, // 顶点2颜色
+      0,
+      0,
+      1, // 顶点3颜色
 
+      1,
+      1,
+      0, // 顶点4颜色
+      0,
+      1,
+      1, // 顶点5颜色
+      1,
+      0,
+      1, // 顶点6颜色
+    ]);
+    g.attributes.color = new BufferAttribute(colors, 3);
+
+    const normals = new Float32Array([
+      0,
+      0,
+      1, // 顶点1法向量
+      0,
+      0,
+      1, // 顶点2法向量
+      0,
+      0,
+      1, // 顶点3法向量
+
+      0,
+      1,
+      0, // 顶点4法向量
+      0,
+      1,
+      0, // 顶点5法向量
+      0,
+      1,
+      0, // 顶点6法向量
+    ]);
+    g.attributes.normal = new BufferAttribute(normals, 3);
+    const m1 = new MeshBasicMaterial({
+      // color: 0x0000ff,
+      vertexColors: true,
+      side: DoubleSide,
+    });
+    const m2 = new PointsMaterial({
+      // color: 0xff0000,
+      vertexColors: true,
+      size: 10.0,
+    });
+    const m3 = new LineBasicMaterial({ color: 0xff0000 });
+    const e1 = new Mesh(g, m1);
+    const e2 = new Points(g, m2);
+    const e3 = new Line(g, m3);
+    this.scene.add(e1);
+    console.log(g.attributes);
+
+    const tg = new BoxBufferGeometry(10, 10, 10);
+    console.log(tg.attributes);
     // this.bufferScene.add(this.plane);
 
     // this.scene.add(this.plane);
@@ -136,8 +230,6 @@ export class ShaderDmeosComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
     this.ef.nativeElement.removeChild(this.renderer.domElement);
   }
   animate() {
@@ -165,9 +257,9 @@ export class ShaderDmeosComponent implements OnInit, OnDestroy {
     );
   }
   coordTrans(event: MouseEvent) {
-    let px = (event.offsetX / this.renderer.domElement.width) * 2 - 1;
-    let py = -(event.offsetY / this.renderer.domElement.height) * 2 + 1;
-    let p = new Vector3(px, py, 0).unproject(this.camera); // screen to scene
+    const px = (event.offsetX / this.renderer.domElement.width) * 2 - 1;
+    const py = -(event.offsetY / this.renderer.domElement.height) * 2 + 1;
+    const p = new Vector3(px, py, 0).unproject(this.camera); // screen to scene
     console.log(p);
     p.applyMatrix4(
       new Matrix4().multiplyMatrices(
@@ -183,7 +275,7 @@ export class ShaderDmeosComponent implements OnInit, OnDestroy {
     console.log(p);
     console.log(((p.x + 1) / 2) * this.renderer.domElement.width); // screen to scene again
     console.log(-((p.y - 1) / 2) * this.renderer.domElement.height);
-    let tCoord = new Vector3(px, py, 0);
+    const tCoord = new Vector3(px, py, 0);
     tCoord.applyMatrix4(this.plane.matrixWorld);
     console.log(tCoord);
     // tCoord.applyMatrix4(new Matrix4().getInverse(this.plane.matrixWorld));
