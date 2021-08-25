@@ -15,7 +15,10 @@ export function makeArray(
   y = 100,
   z = 1
 ) {
-  let img = new Float32Array(n);
+  console.time('zero');
+  const img = new Float32Array(n);
+  console.timeEnd('zero');
+  console.time('fill array');
   for (let i = 0; i < n; i++) {
     switch (filter) {
       case 'linear':
@@ -28,7 +31,8 @@ export function makeArray(
         break;
     }
   }
-  console.log(img);
+  console.timeEnd('fillArray');
+
   return img;
 }
 
@@ -71,7 +75,7 @@ export function printMatrix4(m: Matrix4) {
 }
 
 export function transform16to32(arrayBuffer: ArrayBuffer) {
-  const rawArray = new Uint16Array(arrayBuffer);
+  const rawArray = new Int16Array(arrayBuffer);
   const f32Array = new Float32Array(rawArray.length);
   for (let i = 0; i < rawArray.length; i++) {
     f32Array[i] = rawArray[i] / 1000;

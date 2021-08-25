@@ -1,0 +1,10 @@
+<p>http-concern works!</p>
+
+<div>
+  <button
+    *ngFor="let item of requestList"
+    (click)="getRequest(item.url, item.option)"
+  >
+    {{ item.name }}
+  </button>
+</div>

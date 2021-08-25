@@ -21,6 +21,8 @@ import { AudioPlayerComponent } from './audio-player/audio-player.component';
 import { GameComponent } from './game/game.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ImageGridComponent } from './image-grid/image-grid.component';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpConcernComponent } from './http-concern/http-concern.component';
 // import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
@@ -37,12 +39,15 @@ import { ImageGridComponent } from './image-grid/image-grid.component';
     AudioPlayerComponent,
     GameComponent,
     ImageGridComponent,
+    HttpConcernComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     PointSourceModule,
     FlexLayoutModule,
+    HttpClientModule,
+
     // ToolsModule,
     RouterModule.forRoot([
       { path: 'soldiers', component: ModelsSoldierComponent },
@@ -61,6 +66,7 @@ import { ImageGridComponent } from './image-grid/image-grid.component';
       { path: 'dance', component: DanceComponent },
       { path: 'game', component: GameComponent },
       { path: 'image-grid', component: ImageGridComponent },
+      { path: 'http-concern', component: HttpConcernComponent },
     ]),
   ],
   providers: [],

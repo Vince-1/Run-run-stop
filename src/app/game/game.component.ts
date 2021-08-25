@@ -3,7 +3,7 @@ import { combineLatest, fromEvent, interval } from 'rxjs';
 import { buffer, scan } from 'rxjs/operators';
 import { Matrix4, Vector2, Vector3 } from 'three';
 import { initGame } from '../share/game';
-
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -23,23 +23,22 @@ export class GameComponent implements OnInit {
     );
   }
 
-  constructor() {
-    console.log(foo(1), foo(2), foo(100));
-    const a = { color: 'red' };
-    const f = foo;
-    const t = test;
-    console.log(foo);
-    console.log(f);
-    console.log(test);
-    console.log(t);
-
+  helpInfo?: any;
+  constructor(private http: HttpClient) {
     let planeAffine = new Matrix4().makeRotationX(Math.PI * 0.5);
-    let operation1 = new Matrix4().makeScale(1, -1, 1);
-    let operation2 = new Matrix4().makeTranslation(0, 1000, 0);
+    // let operation1 = new Matrix4().makeScale(1, -1, 1);
+    const operation2 = new Matrix4().makeTranslation(0, 1000, 0);
     planeAffine = new Matrix4().multiplyMatrices(operation2, planeAffine);
-
+    this.http.get('assets/helpInfo.json').subscribe(
+      (x) => {
+        // console.log(x);
+        this.helpInfo = JSON.stringify(x);
+        // this.helpInfo = x;
+      },
+      (e) => console.error(e)
+    );
     console.log(planeAffine);
-    let p = new Vector3(100, 200, 300);
+    const p = new Vector3(100, 200, 300);
     console.log(p.applyMatrix4(planeAffine));
     // .applyMatrix4(operation2));
     console.log(p);
@@ -86,6 +85,8 @@ export class GameComponent implements OnInit {
     //   (x: KeyboardEvent) => console.log(x),
     //   (e) => console.error(e)
     // );
+    console.log(this.game);
+    console.log(this.gameJson);
     const time = interval(1000 * this.period);
     fromEvent(window, 'keydown')
       .pipe(

@@ -1,1 +1,8 @@
-<p>shader-dmeos works!</p>
+<div fxLayout="column">
+  <div>{{ time }}</div>
+  <button (click)="makeTexture()">make texture</button>
+  <button (click)="setTexture()">set texture</button>
+  <button (click)="makeMesh()">make mesh</button>
+
+</div>
+<canvas #cubeDemo></canvas>

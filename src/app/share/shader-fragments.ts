@@ -23,9 +23,9 @@ export namespace shaders {
             float y = (vTextureCoord.y - center.y) / size.y + 0.5;
             float z = (vTextureCoord.z - center.z) / size.z + 0.5;
             
-            // vec4 texColor = texture(img,vec3(x,y,z));
-            // gl_FragColor = texColor;
-            gl_FragColor = vec4(x, y, z, 1.0);
+            vec4 texColor = texture(img,vec3(x,y,z));
+            gl_FragColor = texColor;
+            // gl_FragColor = vec4(x, y, z, 1.0);
           }
           `,
   };
