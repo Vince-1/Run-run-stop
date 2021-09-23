@@ -13,6 +13,13 @@ import {
   ShaderMaterial,
   MeshBasicMaterial,
   PlaneBufferGeometry,
+  Raycaster,
+  CircleBufferGeometry,
+  Matrix4,
+  Matrix3,
+  Line,
+  BufferGeometry,
+  Group,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { shaders } from '../share/shader-fragments';
@@ -55,6 +62,20 @@ import {
 } from '../share/dicomTag';
 import { scan } from 'rxjs/operators';
 
+import * as I from 'monocle-ts/lib/Iso';
+import * as T from 'monocle-ts/Traversal';
+import * as Observable from 'zen-observable';
+import * as lodash from 'lodash';
+import { StoreByArray, WithId } from '../share/store';
+import {
+  Drag,
+  editMeasureLine2d,
+  MeasureLine2d,
+  MeasureLine2dState,
+} from './entity-2d-model';
+import { measurelineEvent$, Mode } from './entity-event';
+import { number } from 'fp-ts';
+
 @Component({
   selector: 'app-tomo',
   templateUrl: './tomo.component.html',
@@ -78,8 +99,8 @@ export class TomoComponent implements OnInit {
   ty = 100;
   tz = 100;
 
-  renderer: WebGLRenderer;
-  orbit: OrbitControls;
+  renderer?: WebGLRenderer;
+  orbit?: OrbitControls;
   z = 50;
   shape = new Vector3(10, 10, 10);
   size = new Vector3(10, 10, 10);
@@ -120,7 +141,14 @@ export class TomoComponent implements OnInit {
     this.shaderMaterial
   );
 
-  canvas: HTMLCanvasElement;
+  canvas?: HTMLCanvasElement;
+
+  mouse$?: Rx.Observable<{ x: number; y: number }>;
+
+  toolStore = new StoreByArray<WithId, MeasureLine2d>();
+
+  modeSubject = new Subject<Mode>();
+
   @ViewChild('canvas', { static: true }) set canvasRef(
     c: ElementRef<HTMLCanvasElement>
   ) {
@@ -131,14 +159,85 @@ export class TomoComponent implements OnInit {
   @ViewChild('toRemove', { static: true }) toReomve!: ElementRef<HTMLElement>;
 
   @ViewChild('fileSelector', { static: true })
-  fileSelector: ElementRef<HTMLInputElement>;
-
-  // fileReader = new FileReader();
-  // readDicomSubject = new Subject<InfoConcernDicom>();
-
-  // data = new Uint8Array();
+  fileSelector?: ElementRef<HTMLInputElement>;
 
   constructor(private ef: ElementRef, rendererFactory: RendererFactory2) {
+    const xxxx = { '1': 1, '2': 2 };
+    console.log(xxxx[0]);
+    console.log(xxxx[1]);
+    console.log(xxxx[2]);
+
+    type A = { x: number; y: number };
+    type B = { x: number };
+
+    type C = A extends B ? string : number;
+
+    const xx = { x: 100, y: 200 };
+    for (let i in xx) {
+      console.log(i);
+    }
+
+    function xxx() {
+      var mmm = 1;
+      if (true) {
+        var xxxx = 2;
+      }
+      return xxxx;
+    }
+    xxx();
+
+    enum aa {
+      'xxx' = 'x0',
+      y = 'y0',
+      z = 1,
+    }
+    for (let i in aa) {
+      console.log(i);
+      console.log(i === 'xxx');
+      console.log(typeof i);
+    }
+    const point = new Vector2(1, 0);
+    const r = new Matrix3().rotate(Math.PI * 0.5);
+    const t = new Matrix3().translate(1, 0);
+
+    const affine = r.clone().multiply(t);
+    const affine2 = t.clone().multiply(r);
+
+    const result1 = point.clone().applyMatrix3(affine);
+    const result2 = point.clone().applyMatrix3(affine2);
+
+    console.log(result1, result2);
+    console.log(t, t.clone().invert());
+    console.log(
+      new Vector2(1, 0).angle(),
+      new Vector2(0, 1).angle(),
+      new Vector2(0, -1).angle(),
+      new Vector2(1, -0.00001).angle(),
+      new Vector2(1, 0).applyMatrix3(r).angle()
+    );
+
+    const line1 = new Vector2(1, 0);
+    window['line1'] = line1;
+
+    const s2nISO = I.iso(
+      (s: string) => parseFloat(s),
+      (n: number) => n.toString()
+    );
+
+    const n2sIso = I.reverse(s2nISO);
+    const s2nOption = I.asOptional(s2nISO);
+    const n2n = I.id();
+
+    const n2sTranversal = T.id();
+
+    // const n2sOption = O.optional( (s:number) =>  )
+    console.log(I.Category);
+    console.log(s2nISO.get('123a'));
+    console.log(n2sIso.get(123));
+    console.log(n2n.get(1));
+
+    window['I'] = I;
+    window['s2nISO'] = s2nISO;
     const a = new Subject();
     const b = new Subject();
 
@@ -195,12 +294,12 @@ export class TomoComponent implements OnInit {
 
   loadFile(event: InputEvent) {
     console.log(event);
-    console.log(this.fileSelector.nativeElement);
-    console.log(this.fileSelector.nativeElement.files);
-    if (this.fileSelector !== undefined) {
-      const l = this.fileSelector.nativeElement.files.length;
+    console.log(this.fileSelector!.nativeElement);
+    console.log(this.fileSelector!.nativeElement.files);
+    if (this.fileSelector !== null && this.fileSelector !== undefined) {
+      const l = this.fileSelector.nativeElement.files!.length;
 
-      const files = this.fileSelector.nativeElement.files;
+      const files = this.fileSelector.nativeElement.files!;
       const infos = new Array(l)
         .fill(0)
         .map((f, index) => dicomReader2<InfoConcernDicom>(files[index]));
@@ -235,64 +334,72 @@ export class TomoComponent implements OnInit {
   reMove() {
     this.toReomve.nativeElement.remove();
   }
+  showToolStore() {
+    console.log(this.toolStore.currentState());
+  }
   ngOnInit(): void {
-    // this.readDicomSubject
-    //   .asObservable()
+    interface xx {
+      a: number;
+      b?: number;
+    }
+
+    const aa: Required<xx> = { a: 1, b: 2 };
+    const bb: xx = { a: 1 };
+    // const x = (v: Maybe<number>) => {
+    //   v.be;
+    // };
+
+    // Rx.interval(1000)
     //   .pipe(
-    //     // TODO: NEED MORE
-    //     scan(
-    //       (
-    //         acc: { info: InfoConcernDicom; max: number },
-    //         cur: InfoConcernDicom
-    //       ) => ({
-    //         info: cur,
-    //         max: acc.max <= cur.instanceNumber ? cur.instanceNumber : acc.max,
-    //       }),
-    //       { info: {} as InfoConcernDicom, max: 0 }
-    //     )
+    //     Ro.groupBy(
+    //       (i) => i % 3,
+    //       (i) => i,
+    //       (g) => g.pipe(Ro.take(2))
+    //     ),
+    //     Ro.mergeMap((i) => {
+    //       console.log(i.key);
+    //       return i;
+    //     })
     //   )
     //   .subscribe(
-    //     (info) => {
-    //       console.log(info);
-    //       if (info.max === 0) {
-    //       } else {
-    //         const image3d = this.updateImage3D(info.info, info.max);
-    //         this.setImage(image3d);
-    //       }
-    //     },
+    //     (x) => console.log(x),
     //     (e) => console.error(e)
     //   );
     console.log(this.canvas);
     console.log(this.toReomve);
     this.renderer = new WebGLRenderer({
       canvas: this.canvas,
-      context: this.canvas.getContext('webgl2', {
+      context: this.canvas!.getContext('webgl2', {
         alpha: true,
         antialias: true,
-      }),
+      })!,
     });
     // this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setSize(1000, 1000);
     this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.camera = new OrthographicCamera(-500, 500, -500, 500);
+
     this.camera.position.z = 1000;
     this.scene.add(this.plane);
     this.renderer.render(this.scene, this.camera);
-
     console.log(this.plane);
     printMatrix4(this.plane.matrixWorld);
     const a = new Vector3();
     a.setFromMatrixPosition(this.plane.modelViewMatrix);
     console.log(a);
 
+    console.log(this.camera);
+
     this.forMonocle();
     // this.ef.nativeElement.appendChild(this.renderer.domElement);
     this.aninmate();
     fromEvent(this.ef.nativeElement, 'mousewheel').subscribe(
-      (x: MouseWheelEvent) => {
+      (x) => {
         // x.preventDefault();
+        const xx = x as WheelEvent;
         this.updateSlicer(
           this.shaderMaterial.uniforms.slicer.value +
-            x.deltaY / Math.abs(x.deltaY)
+            xx.deltaY / Math.abs(xx.deltaY)
         );
       },
       (e) => console.error(e)
@@ -313,7 +420,469 @@ export class TomoComponent implements OnInit {
     // const imageT = makeTexture3d(array, 100, 100, 100);
     // this.shaderMaterial.uniforms.img.value = imageT;
     // console.log(imageT)
+
+    const down$ = fromEvent(
+      document.body,
+      'mousedown'
+    ) as Rx.Observable<MouseEvent>;
+    const move$ = fromEvent(
+      document.body,
+      'mousemove'
+    ) as Rx.Observable<MouseEvent>;
+    const up$ = fromEvent(document.body, 'mouseup').pipe(
+      // (e) => Rx.merge(e, Rx.of('cancel'))
+      Ro.mergeMap((e) => Rx.merge(Rx.of(e), Rx.of('cancel')))
+    ) as Rx.Observable<MouseEvent | 'cancel'>;
+    const cancelUp$ = up$.pipe(Ro.filter((x) => x === 'cancel'));
+    const eventUp$ = up$.pipe(
+      Ro.filter((x) => x !== 'cancel')
+    ) as Rx.Observable<MouseEvent>;
+
+    const leave$ = fromEvent(
+      document.body,
+      'mouseleave'
+    ) as Rx.Observable<MouseEvent>;
+
+    const body$ = Rx.merge(down$, move$, eventUp$);
+
+    const cancel$ = Rx.merge(eventUp$);
+    body$.pipe(
+      Ro.windowToggle(down$, () => eventUp$),
+      Ro.mergeAll()
+    );
+    // .subscribe(
+    //   (x) => console.log(x.type),
+    //   (e) => console.error(e)
+    // );
+
+    // down$
+    //   .pipe(
+    //     Ro.switchMap(
+    //       (d) =>
+    //         move$
+    //           .pipe(
+    //             Ro.startWith(d),
+    //             Ro.takeUntil(cancelUp$)
+
+    //             // Ro.endWith({ type: 'up' })
+    //           )
+    //           .pipe((f) => Rx.merge(f, f.pipe(Ro.last())))
+    //       // Rx.concat(
+    //       //   move$.pipe(Ro.takeUntil(cancelUp$)),
+    //       //   eventUp$.pipe(Ro.take(1))
+    //       // ).pipe(Ro.startWith(d))
+    //     )
+    //   )
+    //   .subscribe(
+    //     (x) => console.log(x.type),
+    //     (e) => console.error(e)
+    //   );
+
+    const point = new Mesh(
+      new CircleBufferGeometry(10),
+      new MeshBasicMaterial({ side: DoubleSide, color: new Color('red') })
+    );
+
+    const pointGreen = new Mesh(
+      new CircleBufferGeometry(10),
+      new MeshBasicMaterial({ side: DoubleSide, color: new Color('green') })
+    );
+
+    const point2 = point.clone();
+    const point3 = point.clone();
+
+    new Vector3(-1, 1, 0).unproject(this.camera);
+    pointGreen.position.set(100, 100, 0);
+    this.scene.add(point, point2, point3, pointGreen);
+    this.mouse$ = fromEvent<MouseEvent>(
+      this.renderer.domElement,
+      'mousemove'
+    ).pipe(Ro.map((m) => ({ x: m.offsetX - 500, y: m.offsetY - 500 })));
+
+    const point$ = this.mouse$.pipe(Ro.map((p) => new Vector3(p.x, p.y, 0)));
+
+    const mode$ = Rx.of(Mode.draw);
+
+    const entities$ = Rx.of([1, 2, 3]);
+    const isOn = (n: number, p: Vector3) => p.x / n > 50;
+
+    const mouseOnEntities$ = Rx.combineLatest(point$, entities$).pipe(
+      Ro.map(([p, es]) => es.filter((e) => isOn(e, p)).sort()),
+      Ro.map((es) => (es.length > 0 ? es[es.length - 1] : 0))
+    );
+
+    const drag$ = new Rx.Observable<{
+      tag: 'mousedown' | 'mousemove' | 'mouseup';
+      origin: Vector3;
+      current: Vector3;
+      last: Vector3;
+    }>((o) => {
+      o.next({
+        tag: 'mousedown',
+        current: new Vector3(),
+        origin: new Vector3(),
+        last: new Vector3(),
+      });
+    });
+
+    const editEntities = (
+      edit: (
+        current: number,
+        selected: number,
+        drag: {
+          tag: 'mousedown' | 'mousemove' | 'mouseup';
+          origin: Vector3;
+          current: Vector3;
+          last: Vector3;
+        }
+      ) => { current: number; selected: number }
+    ) =>
+      drag$.pipe(
+        Ro.withLatestFrom(mouseOnEntities$),
+        Ro.scan(
+          (
+            acc: {
+              current: number;
+              selected: number;
+            },
+            cur: [
+              {
+                tag: 'mousedown' | 'mousemove' | 'mouseup';
+                origin: Vector3;
+                current: Vector3;
+                last: Vector3;
+              },
+              number
+            ]
+          ) => {
+            const ns = edit(acc.current, cur[1], cur[0]);
+            const result = { current: ns.current, selected: ns.selected };
+            return result;
+          }
+        )
+      );
+
+    const drawEntity = (
+      draw: (
+        n: number,
+        d: {
+          tag: 'mousedown' | 'mousemove' | 'mouseup';
+          origin: Vector3;
+          current: Vector3;
+          last: Vector3;
+        }
+      ) => number
+    ) =>
+      drag$.pipe(
+        Ro.scan(
+          (
+            acc: {
+              entity: number;
+            },
+            cur: {
+              tag: 'mousedown' | 'mousemove' | 'mouseup';
+              origin: Vector3;
+              current: Vector3;
+              last: Vector3;
+            }
+          ) => {
+            return { entity: draw(acc.entity, cur) };
+          }
+        )
+      );
+
+    const editFunc = (
+      current: number,
+      selected: number,
+      drag: {
+        tag: 'mousedown' | 'mousemove' | 'mouseup';
+        origin: Vector3;
+        current: Vector3;
+        last: Vector3;
+      }
+    ) => ({ current, selected });
+
+    const drawFunc = (
+      n: number,
+      d: {
+        tag: 'mousedown' | 'mousemove' | 'mouseup';
+        origin: Vector3;
+        current: Vector3;
+        last: Vector3;
+      }
+    ) => n;
+    const selectMode$ = mode$.pipe(
+      Ro.switchMap((m) => (m === 'draw' ? Rx.EMPTY : editEntities(editFunc)))
+    );
+    const drawMode$ = mode$.pipe(
+      Ro.switchMap((m) => (m === 'select' ? Rx.EMPTY : drawEntity(drawFunc)))
+    );
+
+    mouseOnEntities$.subscribe(
+      (x) => {},
+      (e) => console.error(e)
+    );
+
+    point$.pipe(Ro.bufferCount(3, 1)).subscribe(
+      (p) => {
+        // point.position.set(p[0].x, p[0].y, 0);
+        // point2.position.set(p[1].x, p[1].y, 0);
+        // point3.position.set(p[2].x, p[2].y, 0);
+
+        [point, pointGreen].forEach((m) => {
+          if (m.position.distanceTo(p[0]) < 15) {
+            m.position.set(p[0].x, p[0].y, 0);
+          }
+        });
+
+        if (p[0].distanceTo(pointGreen.position) < 15) {
+          pointGreen.position.add(
+            pointGreen.position.clone().add(p[0].clone().multiplyScalar(-1))
+          );
+        }
+      },
+      (e) => console.error(e)
+    );
+
+    fromEvent<MouseEvent>(this.renderer.domElement, 'mousedown').subscribe(
+      (x) => {
+        const client = new Vector3(
+          (x.offsetX - 500) / 500,
+          (x.offsetY - 500) / 500,
+          0
+        );
+        // const worldVector = client.unproject(this.camera);
+        // console.log(worldVector);
+      },
+      (e) => console.error(e)
+    );
+
+    const measueline1 = new MeasureLine2d(
+      new Vector2(-250, -250),
+      new Vector2(0, 0),
+      'm1',
+      3
+    );
+    const measueline2 = new MeasureLine2d(
+      new Vector2(250, 250),
+      new Vector2(100, 100),
+      'm2',
+      2
+    );
+
+    const m1 = {
+      start: new Mesh(
+        new CircleBufferGeometry(10),
+        new MeshBasicMaterial({ side: DoubleSide, color: new Color('blue') })
+      ),
+      end: new Mesh(
+        new CircleBufferGeometry(10),
+        new MeshBasicMaterial({ side: DoubleSide, color: new Color('white') })
+      ),
+      line: new Line(
+        new BufferGeometry().setFromPoints([
+          new Vector3(-100, -100, 0),
+          new Vector3(100, 100, 0),
+        ]),
+        new MeshBasicMaterial({ side: DoubleSide, color: new Color('green') })
+      ),
+    };
+    const m2 = {
+      start: new Mesh(
+        new CircleBufferGeometry(10),
+        new MeshBasicMaterial({ side: DoubleSide, color: new Color('red') })
+      ),
+      end: new Mesh(
+        new CircleBufferGeometry(10),
+        new MeshBasicMaterial({ side: DoubleSide, color: new Color('black') })
+      ),
+      line: new Line(
+        new BufferGeometry().setFromPoints([
+          new Vector3(-100, -100, 0),
+          new Vector3(100, 100, 0),
+        ]),
+        new MeshBasicMaterial({ side: DoubleSide, color: new Color('green') })
+      ),
+    };
+    this.toolStore.insertMany([measueline1, measueline2]).subscribe(
+      (x) => console.log(x),
+      (e) => console.error(e)
+    );
+
+    // this.scene.add(m1.start, m1.end, m1.line);
+    // this.scene.add(m2.start, m2.end, m2.line);
+
+    // const m1$ = this.toolStore.state$.pipe(
+    //   Ro.map((ms) => ms.find((m) => m.id === 'm1')),
+    //   Ro.distinctUntilChanged()
+    // );
+
+    // const m2$ = this.toolStore.state$.pipe(
+    //   Ro.map((ms) => ms.find((m) => m.id === 'm2')),
+    //   Ro.distinctUntilChanged()
+    // );
+
+    const parseMeasurelineFunc = (
+      m: MeasureLine2d,
+      entity: { start: Mesh; end: Mesh; line: Line }
+    ) => {
+      const s = m.start.clone().applyMatrix3(m.modelMatrix);
+      const start_position = new Vector3(s.x, s.y, 0);
+      const e = m.end.clone().applyMatrix3(m.modelMatrix);
+      const end_position = new Vector3(e.x, e.y, 0);
+
+      entity.start.position.set(s.x, s.y, 0);
+      entity.end.position.set(e.x, e.y, 0);
+      entity.line.geometry = new BufferGeometry().setFromPoints([
+        start_position,
+        end_position,
+      ]);
+    };
+
+    // m1$.subscribe(
+    //   (m) => {
+    //     parseMeasurelineFunc(m, m1);
+    //   },
+    //   (e) => console.error(e)
+    // );
+    // m2$.subscribe(
+    //   (m) => {
+    //     parseMeasurelineFunc(m, m2);
+    //   },
+    //   (e) => console.error(e)
+    // );
+
+    const d$ = this.createDrag2(this.renderer.domElement);
+    const measureline$ = measurelineEvent$(
+      this.toolStore.state$,
+      this.mouse$.pipe(Ro.map((m) => new Vector2(m.x, m.y))),
+      d$,
+      this.modeSubject.asObservable()
+    );
+
+    // d$.subscribe(
+    //   (x) => console.log(x),
+    //   (e) => console.error(e)
+    // );
+    measureline$.eventEdit$.subscribe(
+      (x) => {
+        // console.log('edit: ', x);
+        if (x.operationOn?.be) {
+          this.toolStore.update(x.operationOn.value).subscribe(
+            (x) => console.log(x),
+            (e) => console.error(e)
+          );
+        }
+      },
+      (e) => console.error(e)
+    );
+
+    measureline$.eventDraw$.subscribe(
+      (x) => {
+        // console.log('draw: ', x);
+        if (x.operationOn?.be) {
+          this.toolStore.upsertMany(x.operationOn.value).subscribe(
+            (x) => console.log(x),
+            (e) => console.error(e)
+          );
+        }
+        if (x.cancelOn?.be) {
+          this.scene.remove(this.scene.getObjectByName(x.cancelOn.value.id));
+          return this.toolStore.remove(x.cancelOn.value).subscribe(
+            (x) => console.log(x),
+            (e) => console.error(e)
+          );
+        }
+        if (x.finished) {
+          this.setMode(Mode.select);
+        }
+      },
+      (e) => console.error(e)
+    );
+
+    const observableOnId = (id: string) =>
+      this.toolStore.state$.pipe(
+        Ro.map((ts) => ts.find((t) => t.id === id)),
+        Ro.takeWhile((x) => x !== undefined),
+        Ro.distinctUntilChanged()
+      );
+
+    const changeTool$ = this.toolStore.state$.pipe(
+      Ro.map((ts) => ts.map((t) => t.id)),
+      Ro.distinctUntilChanged((a, b) => lodash.isEqual(a, b)),
+      Ro.mergeMap((ts) => Rx.merge(...ts.map((t) => Rx.of(t)))),
+      Ro.groupBy(
+        (t) => t,
+        (t) => t,
+        (g) => g.pipe(Ro.switchMap((i) => observableOnId(i)))
+      ),
+      Ro.mergeMap((i$) =>
+        i$.pipe(
+          Ro.distinctUntilChanged(),
+          Ro.mergeMap((i) => observableOnId(i))
+        )
+      )
+    );
+
+    console.log(this.scene);
+    changeTool$.subscribe(
+      (t) => {
+        // console.log(t);
+        const group = this.scene.getObjectByName(t.id);
+        const m =
+          group === undefined
+            ? {
+                start: new Mesh(
+                  new CircleBufferGeometry(10),
+                  new MeshBasicMaterial({
+                    side: DoubleSide,
+                    color: new Color('red'),
+                  })
+                ),
+                end: new Mesh(
+                  new CircleBufferGeometry(10),
+                  new MeshBasicMaterial({
+                    side: DoubleSide,
+                    color: new Color('black'),
+                  })
+                ),
+                line: new Line(
+                  new BufferGeometry().setFromPoints([
+                    new Vector3(-100, -100, 0),
+                    new Vector3(100, 100, 0),
+                  ]),
+                  new MeshBasicMaterial({
+                    side: DoubleSide,
+                    color: new Color('green'),
+                  })
+                ),
+              }
+            : {
+                start: group.getObjectByName('start') as Mesh,
+                end: group.getObjectByName('end') as Mesh,
+                line: group.getObjectByName('line') as Line,
+              };
+        m.start.name = 'start';
+        m.end.name = 'end';
+        m.line.name = 'line';
+        parseMeasurelineFunc(t, m);
+
+        if (group === undefined) {
+          console.log('scene', this.scene);
+          const newGroup = new Group();
+          newGroup.name = t.id;
+          newGroup.add(m.start, m.end, m.line);
+          this.scene.add(newGroup);
+        }
+      },
+      (e) => console.error(e)
+    );
   }
+
+  storeChange() {
+    // Rx.of(1).pipe(Ro.withLatestFrom())
+  }
+
   setImage(img: Image3D) {
     // this.shaderMaterial.uniforms.img.value = img;
     this.shaderMaterial.uniforms.img.value = makeTexture3d(
@@ -327,7 +896,7 @@ export class TomoComponent implements OnInit {
   }
   setColormap(c: Texture) {}
   render() {
-    this.renderer.render(this.scene, this.camera);
+    this.renderer!.render(this.scene, this.camera);
   }
   aninmate() {
     requestAnimationFrame(() => this.aninmate());
@@ -336,6 +905,12 @@ export class TomoComponent implements OnInit {
   updateSlicer(s: number) {
     this.shaderMaterial.uniforms.slicer.value = s;
     console.log(s);
+  }
+
+  setMode(value: Mode) {
+    console.log(value === 'select', value === Mode.select);
+    const m = value === 'select' ? Mode.select : Mode.draw;
+    this.modeSubject.next(m);
   }
 
   forMonocle() {
@@ -468,4 +1043,124 @@ export class TomoComponent implements OnInit {
   //     return { shape, pixelSize, center, dtype, data: newData, tag };
   //   }
   // }
+
+  createDrag2(element: HTMLElement) {
+    const down$ = fromEvent(element, 'mousedown') as Rx.Observable<MouseEvent>;
+    const move$ = fromEvent(element, 'mousemove') as Rx.Observable<MouseEvent>;
+    const up$ = fromEvent(
+      element,
+      'mouseup'
+    ).pipe() as Rx.Observable<MouseEvent>;
+    const leave$ = fromEvent(
+      element,
+      'mouseleave'
+    ) as Rx.Observable<MouseEvent>;
+    const cancel = Rx.merge(up$, leave$);
+
+    const body$ = Rx.merge(down$, move$, cancel);
+    const f$ =
+      //  down$.pipe(
+      // Ro.mergeMap((d) =>
+      body$.pipe(
+        Ro.windowToggle(down$, () => cancel),
+        Ro.mergeAll(),
+        // Ro.map((c: MouseEvent) => {
+        //   return {
+        //     origin: new Vector2(d.offsetX - 500, d.offsetY - 500),
+        //     current: new Vector2(c.offsetX - 500, c.offsetY - 500),
+        //     last: new Vector2(c.offsetX - 500, c.offsetY - 500),
+        //     tag: c.type,
+        //   };
+        // }),
+        scan(
+          (
+            acc: {
+              origin: Vector2;
+              current: Vector2;
+              last: Vector2;
+              tag: string;
+            },
+            cur: MouseEvent
+          ) => ({
+            origin:
+              cur.type === 'mousedown'
+                ? new Vector2(cur.offsetX - 500, cur.offsetY - 500)
+                : acc.origin,
+            last:
+              cur.type === 'mousedown'
+                ? new Vector2(cur.offsetX - 500, cur.offsetY - 500)
+                : acc.current,
+            tag: cur.type,
+            current: new Vector2(cur.offsetX - 500, cur.offsetY - 500),
+            // last: acc.current,
+          }),
+          {
+            origin: new Vector2(0, 0),
+            current: new Vector2(0, 0),
+            last: new Vector2(0, 0),
+            tag: 'mousedown',
+          }
+        )
+        // )
+        // )
+      );
+    return f$;
+  }
+
+  createDrag(element: HTMLElement) {
+    const down$ = fromEvent(element, 'mousedown') as Rx.Observable<MouseEvent>;
+    const move$ = fromEvent(element, 'mousemove') as Rx.Observable<MouseEvent>;
+    const up$ = fromEvent(
+      element,
+      'mouseup'
+    ).pipe() as Rx.Observable<MouseEvent>;
+    const leave$ = fromEvent(
+      element,
+      'mouseleave'
+    ) as Rx.Observable<MouseEvent>;
+    const cancel = Rx.merge(up$, leave$).pipe(Ro.tap((x) => console.log(x)));
+    // const f1$ = Ro.windowToggle(Rx.merge(down$, move$, cancel), (i) =>
+    //   ['mouseup', 'mouseleave'].includes(i.type)?
+    // );
+    const f$: Rx.Observable<Drag> = down$.pipe(
+      Ro.switchMap((d: MouseEvent) => {
+        return Rx.merge(move$)
+          .pipe(
+            Ro.takeUntil(cancel),
+            Ro.startWith(d),
+            Ro.map((c: MouseEvent) => {
+              return {
+                origin: new Vector2(d.offsetX - 500, d.offsetY - 500),
+                current: new Vector2(c.offsetX - 500, c.offsetY - 500),
+                last: new Vector2(c.offsetX - 500, c.offsetY - 500),
+                tag: c.type,
+              };
+            }),
+            scan(
+              (acc, cur) => ({
+                ...cur,
+                // last: cur.tag === 'mousedown' ? cur.current : acc.current,
+                last: acc.current,
+              }),
+              {
+                origin: new Vector2(d.offsetX, d.offsetY),
+                current: new Vector2(d.offsetX, d.offsetY),
+                last: new Vector2(d.offsetX, d.offsetY),
+                tag: d.type,
+              }
+            )
+          )
+          .pipe((f) =>
+            Rx.merge(
+              f,
+              f.pipe(
+                Ro.last(),
+                Ro.map((x) => ({ ...x, tag: 'mouseup' }))
+              )
+            )
+          );
+      })
+    );
+    return f$;
+  }
 }

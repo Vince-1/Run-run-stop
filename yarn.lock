@@ -3725,7 +3725,7 @@ forwarded@0.2.0:
   resolved "https://registry.nlark.com/forwarded/download/forwarded-0.2.0.tgz#2269936428aad4c15c7ebe9779a84bf0b2a81811"
   integrity sha1-ImmTZCiq1MFcfr6XeahL8LKoGBE=
 
-fp-ts@^2.10.5:
+fp-ts@^2.11.1:
   version "2.11.1"
   resolved "https://registry.nlark.com/fp-ts/download/fp-ts-2.11.1.tgz#b1eeb2540728b6328542664888442f8f805d2443"
   integrity sha1-se6yVAcotjKFQmZIiEQvj4BdJEM=
@@ -5610,7 +5610,7 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.npm.taobao.org/mkdirp/download/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha1-PrXtYmInVteaXw4qIh3+utdcL34=
 
-monocle-ts@^2.3.9:
+monocle-ts@^2.3.11:
   version "2.3.11"
   resolved "https://registry.nlark.com/monocle-ts/download/monocle-ts-2.3.11.tgz#562cd960bc24eaa84d9b6118d46a5441f3c0aac0"
   integrity sha1-VizZYLwk6qhNm2EY1GpUQfPAqsA=
@@ -8368,7 +8368,7 @@ typescript@3.6.5:
 
 typescript@~3.8.3:
   version "3.8.3"
-  resolved "https://registry.nlark.com/typescript/download/typescript-3.8.3.tgz?cache=0&sync_timestamp=1629616783323&other_urls=https%3A%2F%2Fregistry.nlark.com%2Ftypescript%2Fdownload%2Ftypescript-3.8.3.tgz#409eb8544ea0335711205869ec458ab109ee1061"
+  resolved "https://registry.nlark.com/typescript/download/typescript-3.8.3.tgz#409eb8544ea0335711205869ec458ab109ee1061"
   integrity sha1-QJ64VE6gM1cRIFhp7EWKsQnuEGE=
 
 ua-parser-js@0.7.21:

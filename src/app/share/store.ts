@@ -26,7 +26,7 @@ export function store<T>(init: T): Store<T> {
     .pipe(
       scan<Reducer<T>, T>((s, a, i) => a(s, i), init),
       startWith(init),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     )
     .subscribe(subject);
   function complete() {
@@ -82,7 +82,7 @@ export class StoreByArray<E extends WithId, T extends E> implements Store<T[]> {
     return this.state$.pipe(
       map((items) => items.find(this.equalTo(key))),
       filter((item): item is T => item !== undefined),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
   }
   filter$(fn: (x: T) => boolean): Observable<T[]> {
@@ -105,7 +105,7 @@ export class StoreByArray<E extends WithId, T extends E> implements Store<T[]> {
   // }
   insertMany(insertItems: T[]) {
     return this.dispatch((items: T[]) =>
-      insertArray<T>(items, insertItems, this.equalTo),
+      insertArray<T>(items, insertItems, this.equalTo)
     );
   }
   insert(item: T) {
@@ -118,11 +118,13 @@ export class StoreByArray<E extends WithId, T extends E> implements Store<T[]> {
     }).pipe(map((x) => [item]));
   }
   remove(item: T) {
-    return this.dispatch((items: T[]) => items.filter(this.equalTo(item)));
+    return this.dispatch((items: T[]) =>
+      items.filter((i) => !this.equalTo(item)(i))
+    );
   }
   update(...values: T[]) {
     return this.dispatch((items: T[]) =>
-      updateArray<T>(items, values, this.equalTo),
+      updateArray<T>(items, values, this.equalTo)
     );
   }
   clear() {
@@ -130,7 +132,7 @@ export class StoreByArray<E extends WithId, T extends E> implements Store<T[]> {
   }
   upsertMany(...values: T[]) {
     return this.dispatch((items: T[]) =>
-      upsertArray<T>(items, values, this.equalTo),
+      upsertArray<T>(items, values, this.equalTo)
     );
   }
 }
@@ -138,7 +140,7 @@ export class StoreByArray<E extends WithId, T extends E> implements Store<T[]> {
 function updateArray<T extends WithId>(
   items: T[],
   values: T[],
-  eq: EqOp<T>,
+  eq: EqOp<T>
 ): T[] {
   values.forEach((v) => {
     if (items.find((i) => eq(v)(i)) === undefined) {
@@ -154,7 +156,7 @@ function updateArray<T extends WithId>(
 function insertArray<T extends WithId>(
   items: T[],
   values: T[],
-  eq: EqOp<T>,
+  eq: EqOp<T>
 ): T[] {
   values.forEach((v) => {
     if (items.find((i) => eq(v)(i)) !== undefined) {
@@ -162,7 +164,7 @@ function insertArray<T extends WithId>(
     }
   });
   const finalInsertItems = values.filter(
-    (value) => items.find((i) => eq(value)(i)) === undefined,
+    (value) => items.find((i) => eq(value)(i)) === undefined
   );
 
   return [...items, ...finalInsertItems];
@@ -171,10 +173,10 @@ function insertArray<T extends WithId>(
 function upsertArray<T extends WithId>(
   items: T[],
   values: T[],
-  eq: EqOp<T>,
+  eq: EqOp<T>
 ): T[] {
   const finalInsertItems = values.filter(
-    (value) => items.find((i) => eq(value)(i)) === undefined,
+    (value) => items.find((i) => eq(value)(i)) === undefined
   );
   // const existItems = values.filter(
   //   // (value) => !items.map((i) => i.id).includes(value.id),

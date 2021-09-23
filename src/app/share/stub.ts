@@ -11,7 +11,7 @@ export interface StubDataMeta {
   scale: number;
   offset: number;
 }
-const dataHost = `http://localhost:4200/assets`;
+const dataHost = `http://localhost:4201/assets`;
 export const Textures = {
   gray: `${dataHost}/textures/cm_gray.png`,
   viridis: `${dataHost}/textures/cm_viridis.png`,

@@ -5,10 +5,18 @@
 
 <div #test (click)="reMove()">
   <div style="user-select: none">asadasdasdas</div>
+  <button (click)="showToolStore()">show tool store</button>
+  <select #mode (change)='setMode(mode.value)'>
+    <option value="select">select</option>
+    <option value="draw">draw</option>
+  </select>
   <div #toRemove>aaaaaaaaaaaa</div>
 </div>
 <input #fileSelector type="file" multiple (change)="loadFile($event)" />
+<div *ngIf="mouse$ | async as m">x:{{ m.x }},y:{{ m.y }}</div>
+
+<canvas #canvas></canvas>
 <div #aaa draggable="true" style="position: relative; width: 1000px">
   <div id="sh"></div>
-  <canvas #canvas></canvas>
+  <!-- <canvas #canvas></canvas> -->
 </div>
