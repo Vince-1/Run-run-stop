@@ -1,4 +1,3 @@
-import { cons } from 'fp-ts/lib/ReadonlyNonEmptyArray';
 import { Matrix3, Matrix4, Vector2, Vector3 } from 'three';
 import { v4 as uuid } from 'uuid';
 
@@ -98,6 +97,8 @@ function onLine(p: Vector2, point_1: Vector2, point_2: Vector2, width: number) {
 
   return p_r.x > left && p_r.x < right && p_r.y > top && p_r.y < bottom;
 }
+
+function OnRect() {}
 
 export function updateClassMaker<T extends { constructor: Function }>(
   cons: (x: T) => T,

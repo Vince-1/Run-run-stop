@@ -6,6 +6,7 @@ import {
   DataTexture,
   Matrix4,
   NearestFilter,
+  Matrix3,
 } from 'three';
 
 export function makeArray(
@@ -69,6 +70,16 @@ export function printMatrix4(m: Matrix4) {
     const row = [];
     for (let j = 0; j < 4; j++) {
       row.push(m.elements[i + j * 4]);
+    }
+    console.log(row.join(', '));
+  }
+}
+
+export function printMatrix3(m: Matrix3) {
+  for (let i = 0; i < 3; i++) {
+    const row = [];
+    for (let j = 0; j < 3; j++) {
+      row.push(m.elements[i + j * 3]);
     }
     console.log(row.join(', '));
   }

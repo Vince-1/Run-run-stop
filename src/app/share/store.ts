@@ -122,6 +122,15 @@ export class StoreByArray<E extends WithId, T extends E> implements Store<T[]> {
       items.filter((i) => !this.equalTo(item)(i))
     );
   }
+  removeMany(...values: T[]) {
+    // const ids = values.map((v) => v.id);
+    // return this.dispatch((items: T[]) =>
+    //   items.filter((i) => !ids.includes(i.id))
+    // );
+    return this.dispatch((items: T[]) =>
+      removeArray<T>(items, values, this.equalTo)
+    );
+  }
   update(...values: T[]) {
     return this.dispatch((items: T[]) =>
       updateArray<T>(items, values, this.equalTo)
@@ -135,6 +144,21 @@ export class StoreByArray<E extends WithId, T extends E> implements Store<T[]> {
       upsertArray<T>(items, values, this.equalTo)
     );
   }
+}
+
+function removeArray<T extends WithId>(
+  items: T[],
+  values: T[],
+  eq: EqOp<T>
+): T[] {
+  // const toStay = items.map((x) => {
+  //   const found = values.find((v) => eq(x)(v));
+  //   return found === undefined ? x : found;
+  // });
+  const toStay = items.filter(
+    (item) => values.find((v) => eq(item)(v)) === undefined
+  );
+  return toStay;
 }
 
 function updateArray<T extends WithId>(

@@ -6,11 +6,37 @@
 <div #test (click)="reMove()">
   <div style="user-select: none">asadasdasdas</div>
   <button (click)="showToolStore()">show tool store</button>
-  <select #mode (change)='setMode(mode.value)'>
+  <select #mode (change)="setMode(mode.value)">
     <option value="select">select</option>
     <option value="draw">draw</option>
   </select>
   <div #toRemove>aaaaaaaaaaaa</div>
+
+  <div
+    *ngIf="modeRealOption$ | async as option"
+    style="display: flex; flex-direction: column"
+  >
+    <div>tools</div>
+
+    <div>
+      <button (click)="removeEditing()">remove select</button>
+      <ng-container *ngFor="let o of modeRealOptions">
+        <button [ngClass]="{ flash: option === o }" (click)="setModeReal(o)">
+          {{ o }}
+        </button>
+      </ng-container>
+      <!-- <ng-container *ngIf="editingEntities$ | async as es">
+        <button (click)="removeEntities(es)">remove select</button>
+      </ng-container> -->
+    </div>
+    <div>
+      <ng-container *ngFor="let e of entities$ | async">
+        <button [ngClass]="{ flash: e.editing }" (click)="select(e.id)">
+          {{ e.name }}: {{ e.id }}
+        </button>
+      </ng-container>
+    </div>
+  </div>
 </div>
 <input #fileSelector type="file" multiple (change)="loadFile($event)" />
 <div *ngIf="mouse$ | async as m">x:{{ m.x }},y:{{ m.y }}</div>

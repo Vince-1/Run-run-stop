@@ -8285,6 +8285,11 @@ ts-node@~8.3.0:
     source-map-support "^0.5.6"
     yn "^3.0.0"
 
+ts-transformer-keys@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npm.taobao.org/ts-transformer-keys/download/ts-transformer-keys-0.4.3.tgz#d62389a40f430c00ef98fb9575fb6778a196e3ed"
+  integrity sha1-1iOJpA9DDADvmPuVdftneKGW4+0=
+
 tslib@1.11.1:
   version "1.11.1"
   resolved "https://registry.nlark.com/tslib/download/tslib-1.11.1.tgz?cache=0&sync_timestamp=1628722556410&other_urls=https%3A%2F%2Fregistry.nlark.com%2Ftslib%2Fdownload%2Ftslib-1.11.1.tgz#eb15d128827fbee2841549e171f45ed338ac7e35"

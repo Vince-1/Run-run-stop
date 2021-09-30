@@ -30,6 +30,7 @@
     "monocle-ts": "^2.3.11",
     "rxjs": "~6.5.4",
     "three": "^0.125.2",
+    "ts-transformer-keys": "^0.4.3",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
   },

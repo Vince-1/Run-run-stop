@@ -75,6 +75,13 @@ import {
 } from './entity-2d-model';
 import { measurelineEvent$, Mode } from './entity-event';
 import { number } from 'fp-ts';
+import { Iso } from 'monocle-ts';
+
+import * as generics from '../ts-docs/generics';
+import { Maybe } from '../share/maybe';
+// import { drawEvent$, Entity2d } from './entity-geometry';
+
+import * as eg from './entity-geometry';
 
 @Component({
   selector: 'app-tomo',
@@ -148,7 +155,33 @@ export class TomoComponent implements OnInit {
   toolStore = new StoreByArray<WithId, MeasureLine2d>();
 
   modeSubject = new Subject<Mode>();
+  modeRealOptionSubject = new Rx.BehaviorSubject<eg.ModeRealOption>('select');
 
+  modeRealSubject = new Rx.BehaviorSubject<eg.ModeReal>({
+    mode: eg.Mode.select,
+  });
+
+  // modeReal$ = this.modeRealSubject.asObservable().pipe(Ro.share());
+  modeRealOption$ = this.modeRealOptionSubject.pipe(Ro.shareReplay());
+  modeReal$ = this.modeRealOption$.pipe(Ro.map(eg.optionToModeReal));
+
+  modeRealOptions: eg.ModeRealOption[] = [
+    'select',
+    'draw measure line',
+    'draw angle',
+    'draw cobe angle',
+    'draw roi rectangle',
+    'draw roi elipse',
+  ];
+
+  entityStore = new StoreByArray<WithId, eg.Entity2d>();
+  entities$ = this.entityStore.state$.pipe(Ro.shareReplay());
+  editingEntities$ = this.entities$.pipe(
+    Ro.map((es) => es.filter((e) => e.editing)),
+    Ro.filter((es) => es.length > 0),
+    Ro.distinctUntilChanged((a, b) => lodash.isEqual(a, b)),
+    Ro.shareReplay()
+  );
   @ViewChild('canvas', { static: true }) set canvasRef(
     c: ElementRef<HTMLCanvasElement>
   ) {
@@ -162,6 +195,58 @@ export class TomoComponent implements OnInit {
   fileSelector?: ElementRef<HTMLInputElement>;
 
   constructor(private ef: ElementRef, rendererFactory: RendererFactory2) {
+    this.entities$.subscribe(
+      (x) => {},
+      (e) => console.error(e)
+    );
+    console.log(lodash.isNaN(Infinity - 100));
+    const interval = Rx.interval(1000);
+    const first = interval.pipe(Ro.first());
+    const cancel = interval.pipe(Ro.filter((x) => x === 3));
+
+    // cancel.subscribe(
+    //   (x) => console.log(x),
+    //   (e) => console.error(e)
+    // );
+    interval.pipe(
+      Ro.windowToggle(first, () => cancel),
+      Ro.switchAll()
+    );
+    // .subscribe(
+    //   (x) => console.log(x),
+    //   (e) => console.error(e)
+    // );
+
+    const move$ = fromEvent<MouseEvent>(document.body, 'mousemove');
+
+    move$.pipe(
+      Ro.windowToggle(move$.pipe(Ro.first()), () =>
+        move$.pipe(Ro.filter((x) => x.clientY > 500))
+      ),
+      Ro.switchAll()
+    );
+    // .subscribe(
+    //   (x) => console.log(x),
+    //   (e) => console.error(e)
+    // );
+
+    // interval.subscribe(
+    //   (x) => console.log(x),
+    //   (e) => console.error(e)
+    // );
+
+    const maybeTest: Maybe<number> = null;
+    console.log(maybeTest?.be);
+
+    interface TestProperty {
+      x: number;
+      y: number;
+    }
+    console.log(new Vector2(1, -1).angle());
+
+    console.log(generics.l);
+    console.log(generics.l2);
+
     const xxxx = { '1': 1, '2': 2 };
     console.log(xxxx[0]);
     console.log(xxxx[1]);
@@ -288,10 +373,13 @@ export class TomoComponent implements OnInit {
     // this.renderer.setSize(window.innerWidth, window.innerHeight);
     // this.renderer.setPixelRatio(window.devicePixelRatio);
     // this.camera.position.z = 1000;
-    // this.scene.add(this.plane);
+    this.scene.add(this.plane);
     // this.renderer.render(this.scene, this.camera);
   }
 
+  setModeReal(option: eg.ModeRealOption) {
+    this.modeRealOptionSubject.next(option);
+  }
   loadFile(event: InputEvent) {
     console.log(event);
     console.log(this.fileSelector!.nativeElement);
@@ -336,6 +424,8 @@ export class TomoComponent implements OnInit {
   }
   showToolStore() {
     console.log(this.toolStore.currentState());
+    console.log(this.entityStore.currentState());
+    console.log(this.scene.children);
   }
   ngOnInit(): void {
     interface xx {
@@ -380,7 +470,8 @@ export class TomoComponent implements OnInit {
     this.camera = new OrthographicCamera(-500, 500, -500, 500);
 
     this.camera.position.z = 1000;
-    this.scene.add(this.plane);
+
+    // this.scene.add(this.plane);
     this.renderer.render(this.scene, this.camera);
     console.log(this.plane);
     printMatrix4(this.plane.matrixWorld);
@@ -493,6 +584,7 @@ export class TomoComponent implements OnInit {
 
     new Vector3(-1, 1, 0).unproject(this.camera);
     pointGreen.position.set(100, 100, 0);
+    // pointGreen.geometry.translate(100, 0, 0);
     this.scene.add(point, point2, point3, pointGreen);
     this.mouse$ = fromEvent<MouseEvent>(
       this.renderer.domElement,
@@ -704,10 +796,10 @@ export class TomoComponent implements OnInit {
         new MeshBasicMaterial({ side: DoubleSide, color: new Color('green') })
       ),
     };
-    this.toolStore.insertMany([measueline1, measueline2]).subscribe(
-      (x) => console.log(x),
-      (e) => console.error(e)
-    );
+    // this.toolStore.insertMany([measueline1, measueline2]).subscribe(
+    //   (x) => console.log(x),
+    //   (e) => console.error(e)
+    // );
 
     // this.scene.add(m1.start, m1.end, m1.line);
     // this.scene.add(m2.start, m2.end, m2.line);
@@ -752,27 +844,83 @@ export class TomoComponent implements OnInit {
     //   (e) => console.error(e)
     // );
 
-    const d$ = this.createDrag2(this.renderer.domElement);
-    const measureline$ = measurelineEvent$(
-      this.toolStore.state$,
-      this.mouse$.pipe(Ro.map((m) => new Vector2(m.x, m.y))),
-      d$,
-      this.modeSubject.asObservable()
-    );
+    const singleDrag$ = this.createDrag2(this.renderer.domElement);
+    const continuouseDrag$ = this.createDrag2(this.renderer.domElement, true);
 
-    // d$.subscribe(
+    const nullSubject = new Subject<null>();
+
+    // this.createDrag2(
+    //   this.renderer.domElement,
+    //   nullSubject.asObservable()
+    // ).subscribe(
     //   (x) => console.log(x),
     //   (e) => console.error(e)
     // );
+
+    const a1 = '1';
+    const b1 = 2;
+    const condition = ['1', 2];
+    switch (true) {
+      case ['1', 2] === ['1', 2]: {
+        console.log('asdasdasd');
+      }
+      case a1 === '1' && b1 === 2: {
+        console.log('case2');
+      }
+      default:
+        console.log('default');
+    }
+
+    const condition2 = { a: '1', b: 2 };
+    switch (condition2) {
+      case { a: '1', b: 2 }: {
+        console.log('case1');
+      }
+      default: {
+        console.log('default1');
+      }
+    }
+
+    const measureline$ = measurelineEvent$(
+      this.toolStore.state$,
+      this.mouse$.pipe(Ro.map((m) => new Vector2(m.x, m.y))),
+      singleDrag$,
+      this.modeSubject.asObservable()
+    );
+
+    // const eventDrawEntity$ = this.modeSubject.asObservable().pipe(
+    //   Ro.tap((x) => console.log(x)),
+    //   Ro.switchMap((m) =>
+    //     m === Mode.draw
+    //       ? eg.drawEvent$(
+    //           eg.EntityModelName.measureline,
+    //           this.createDrag2(this.renderer.domElement, true)
+    //         )
+    //       : Rx.EMPTY
+    //   )
+    // );
+
+    const eventDrawEntity$ = eg.drawEvent$(continuouseDrag$, this.modeReal$);
+
+    const eventEditEntity$ = eg.editEvent$(
+      this.entityStore.state$,
+      this.mouse$.pipe(Ro.map((m) => new Vector2(m.x, m.y))),
+      singleDrag$,
+      this.modeReal$
+    );
+
+    const testI = Rx.interval(100);
+    const testI2 = Ro.delay(1000)(Rx.interval(1000));
+
     measureline$.eventEdit$.subscribe(
       (x) => {
         // console.log('edit: ', x);
-        if (x.operationOn?.be) {
-          this.toolStore.update(x.operationOn.value).subscribe(
-            (x) => console.log(x),
-            (e) => console.error(e)
-          );
-        }
+        // if (x.operationOn?.be) {
+        //   this.toolStore.update(x.operationOn.value).subscribe(
+        //     (x) => console.log(x),
+        //     (e) => console.error(e)
+        //   );
+        // }
       },
       (e) => console.error(e)
     );
@@ -780,49 +928,101 @@ export class TomoComponent implements OnInit {
     measureline$.eventDraw$.subscribe(
       (x) => {
         // console.log('draw: ', x);
+        // if (x.operationOn?.be) {
+        //   this.toolStore.upsertMany(x.operationOn.value).subscribe(
+        //     (x) => console.log(x),
+        //     (e) => console.error(e)
+        //   );
+        // }
+        // if (x.cancelOn?.be) {
+        //   this.scene.remove(this.scene.getObjectByName(x.cancelOn.value.id));
+        //   this.toolStore.remove(x.cancelOn.value).subscribe(
+        //     (x) => console.log(x),
+        //     (e) => console.error(e)
+        //   );
+        // }
+        // if (x.finished) {
+        //   this.setMode(Mode.select);
+        // }
+      },
+      (e) => console.error(e)
+    );
+
+    eventEditEntity$.subscribe(
+      (x) => {
+        // console.log('edit: ', x);
         if (x.operationOn?.be) {
-          this.toolStore.upsertMany(x.operationOn.value).subscribe(
+          this.entityStore.update(x.operationOn.value).subscribe(
+            (x) => console.log(x),
+            (e) => console.error(e)
+          );
+        }
+        if (x.last?.be) {
+          this.entityStore.update(x.last.value).subscribe(
+            (x) => console.log(x),
+            (e) => console.error(e)
+          );
+        }
+      },
+      (e) => console.error(e)
+    );
+
+    eventDrawEntity$.subscribe(
+      (x) => {
+        console.log('draw: ', x);
+        if (x.operationOn?.be) {
+          this.entityStore.upsertMany(x.operationOn.value).subscribe(
             (x) => console.log(x),
             (e) => console.error(e)
           );
         }
         if (x.cancelOn?.be) {
           this.scene.remove(this.scene.getObjectByName(x.cancelOn.value.id));
-          return this.toolStore.remove(x.cancelOn.value).subscribe(
+          this.entityStore.remove(x.cancelOn.value).subscribe(
             (x) => console.log(x),
             (e) => console.error(e)
           );
         }
         if (x.finished) {
-          this.setMode(Mode.select);
+          // this.setMode(Mode.select);
+
+          this.setModeReal('select');
         }
       },
       (e) => console.error(e)
     );
-
-    const observableOnId = (id: string) =>
-      this.toolStore.state$.pipe(
+    const observableOnId = <T extends { id: string }>(
+      store: StoreByArray<WithId, T>,
+      id: string
+    ) =>
+      store.state$.pipe(
         Ro.map((ts) => ts.find((t) => t.id === id)),
         Ro.takeWhile((x) => x !== undefined),
         Ro.distinctUntilChanged()
       );
 
-    const changeTool$ = this.toolStore.state$.pipe(
-      Ro.map((ts) => ts.map((t) => t.id)),
-      Ro.distinctUntilChanged((a, b) => lodash.isEqual(a, b)),
-      Ro.mergeMap((ts) => Rx.merge(...ts.map((t) => Rx.of(t)))),
-      Ro.groupBy(
-        (t) => t,
-        (t) => t,
-        (g) => g.pipe(Ro.switchMap((i) => observableOnId(i)))
-      ),
-      Ro.mergeMap((i$) =>
-        i$.pipe(
-          Ro.distinctUntilChanged(),
-          Ro.mergeMap((i) => observableOnId(i))
+    const changeStore$ = <T extends { id: string }>(
+      store: StoreByArray<WithId, T>
+    ): Rx.Observable<T> =>
+      store.state$.pipe(
+        Ro.map((ts) => ts.map((t) => t.id)),
+        Ro.distinctUntilChanged((a, b) => lodash.isEqual(a, b)),
+        Ro.mergeMap((ts) => Rx.merge(...ts.map((t) => Rx.of(t)))),
+        Ro.groupBy(
+          (t) => t,
+          (t) => t,
+          (g) => g.pipe(Ro.switchMap((i) => observableOnId(store, i)))
+        ),
+        Ro.mergeMap((i$) =>
+          i$.pipe(
+            Ro.distinctUntilChanged(),
+            Ro.mergeMap((i) => observableOnId(store, i))
+          )
         )
-      )
-    );
+      );
+
+    const changeTool$ = changeStore$(this.toolStore);
+    const changeEntity$ = changeStore$(this.entityStore);
 
     console.log(this.scene);
     changeTool$.subscribe(
@@ -877,10 +1077,74 @@ export class TomoComponent implements OnInit {
       },
       (e) => console.error(e)
     );
+
+    changeEntity$.subscribe(
+      (e) => {
+        let group = this.scene.getObjectByName(e.id);
+        const baseModels = e.baseModel();
+        const keys = Object.keys(baseModels);
+        type temp = { [Property in keyof typeof baseModels]: string };
+        // console.log(keys);
+        const matrix = this.matrix3ToMatirx4(e.modelMatrix);
+        if (group === undefined) {
+          group = new Group();
+          group.name = e.id;
+          keys.map((key) => {
+            const baseModel = baseModels[key];
+            // const geometry = eg.toGeometry(baseModel);
+            // // const material = this.getMeshBasicMaterial(new Color('green'));
+            // const material = new MeshBasicMaterial({
+            //   color: new Color('red'),
+            //   // side: DoubleSide,
+            // });
+            // const mesh = new Mesh(geometry, material);
+            const mesh = eg.toMesh(baseModel);
+            mesh.name = key;
+            group.add(mesh);
+          });
+          this.scene.add(group);
+        } else {
+          keys.map((key) => {
+            const baseModel = baseModels[key];
+            const entity = group.getObjectByName(key) as Mesh;
+
+            entity.geometry.dispose();
+            entity.geometry = eg.toGeometry(baseModel);
+          });
+        }
+        // group.applyMatrix4(group.matrix.clone().invert().multiply(matrix));
+        group.applyMatrix4(
+          matrix.clone().multiply(group.matrix.clone().invert())
+        );
+        // group.position.set(100, 100, 0);
+        // group.matrix.copy(matrix);
+        // group.updateMatrix();
+        // group.modelViewMatrix.copy(matrix);
+        // group.matrixWorld.copy(matrix);
+        // group.matrixWorldNeedsUpdate = true;
+      },
+      (e) => console.error(e)
+    );
+    const testArray = new Matrix3().translate(10, 0).toArray();
+    console.log(testArray);
   }
 
-  storeChange() {
-    // Rx.of(1).pipe(Ro.withLatestFrom())
+  matrix3ToMatirx4(m3: Matrix3) {
+    const m3Array = m3.toArray();
+    const m4Array = new Matrix4().toArray();
+    m4Array[0] = m3Array[0];
+    m4Array[1] = m3Array[1];
+    m4Array[4] = m3Array[3];
+    m4Array[5] = m3Array[4];
+
+    m4Array[3] = m3Array[2];
+    m4Array[7] = m3Array[5];
+    m4Array[12] = m3Array[6];
+    m4Array[13] = m3Array[7];
+
+    m4Array[15] = m3Array[8];
+
+    return new Matrix4().fromArray(m4Array);
   }
 
   setImage(img: Image3D) {
@@ -913,6 +1177,66 @@ export class TomoComponent implements OnInit {
     this.modeSubject.next(m);
   }
 
+  select(id: string) {
+    const entity = this.entityStore.currentState().find((e) => e.id === id);
+    this.entityStore
+      .upsertMany(entity?.setOptions({ editing: !entity.editing }))
+      .subscribe(
+        (x) => console.log('remove: ', x),
+        (e) => console.error(e)
+      );
+  }
+  // removeEntityById(id: string) {
+  //   this.entityStore
+  //     .get$({ id })
+  //     .pipe(Ro.switchMap((e) => this.entityStore.remove(e)))
+  //     .subscribe(
+  //       (x) => console.log('remove: ', x),
+  //       (e) => console.error(e)
+  //     );
+  // }
+  removeEntitiesFromScene(entities: eg.Entity2d[]) {
+    const groups = entities
+      .map((e) => this.scene.getObjectByName(e.id))
+      .filter((e) => !lodash.isNil(e)) as Group[];
+    const geomeries = lodash.flatten(
+      groups.map((g) => g.children.map((m) => (m as Mesh).geometry))
+    );
+    geomeries.forEach((g) => {
+      if (g) {
+        g.dispose();
+      }
+    });
+    this.scene.remove(...groups);
+  }
+  removeEditing() {
+    const entities = this.entityStore.currentState().filter((e) => e.editing);
+    this.entityStore.removeMany(...entities).subscribe(
+      (x) => console.log('remove: ', x),
+      (e) => console.error(e)
+    );
+    this.removeEntitiesFromScene(entities);
+  }
+
+  // removeEntities(es: eg.Entity2d[]) {
+  //   this.entityStore.removeMany(...es).subscribe(
+  //     (x) => console.log(x),
+  //     (e) => console.error(e)
+  //   );
+  //   const groups = es
+  //     .map((e) => this.scene.getObjectByName(e.id))
+  //     .filter((e) => !lodash.isNil(e)) as Group[];
+  //   const geomeries = lodash.flatten(
+  //     groups.map((g) => g.children.map((m) => (m as Mesh).geometry))
+  //   );
+  //   console.log(groups);
+  //   geomeries.forEach((g) => {
+  //     if (g) {
+  //       g.dispose();
+  //     }
+  //   });
+  //   this.scene.remove(...groups);
+  // }
   forMonocle() {
     interface Street {
       num: number;
@@ -1044,7 +1368,9 @@ export class TomoComponent implements OnInit {
   //   }
   // }
 
-  createDrag2(element: HTMLElement) {
+  // creatDragWithCancel(element:HTMLElement,cance) {}
+
+  createDrag2(element: HTMLElement, isContinuous: boolean = false) {
     const down$ = fromEvent(element, 'mousedown') as Rx.Observable<MouseEvent>;
     const move$ = fromEvent(element, 'mousemove') as Rx.Observable<MouseEvent>;
     const up$ = fromEvent(
@@ -1055,58 +1381,59 @@ export class TomoComponent implements OnInit {
       element,
       'mouseleave'
     ) as Rx.Observable<MouseEvent>;
-    const cancel = Rx.merge(up$, leave$);
 
-    const body$ = Rx.merge(down$, move$, cancel);
-    const f$ =
-      //  down$.pipe(
-      // Ro.mergeMap((d) =>
-      body$.pipe(
-        Ro.windowToggle(down$, () => cancel),
-        Ro.mergeAll(),
-        // Ro.map((c: MouseEvent) => {
-        //   return {
-        //     origin: new Vector2(d.offsetX - 500, d.offsetY - 500),
-        //     current: new Vector2(c.offsetX - 500, c.offsetY - 500),
-        //     last: new Vector2(c.offsetX - 500, c.offsetY - 500),
-        //     tag: c.type,
-        //   };
-        // }),
-        scan(
-          (
-            acc: {
-              origin: Vector2;
-              current: Vector2;
-              last: Vector2;
-              tag: string;
-            },
-            cur: MouseEvent
-          ) => ({
-            origin:
-              cur.type === 'mousedown'
-                ? new Vector2(cur.offsetX - 500, cur.offsetY - 500)
-                : acc.origin,
-            last:
-              cur.type === 'mousedown'
-                ? new Vector2(cur.offsetX - 500, cur.offsetY - 500)
-                : acc.current,
-            tag: cur.type,
-            current: new Vector2(cur.offsetX - 500, cur.offsetY - 500),
-            // last: acc.current,
-          }),
-          {
-            origin: new Vector2(0, 0),
-            current: new Vector2(0, 0),
-            last: new Vector2(0, 0),
-            tag: 'mousedown',
-          }
-        )
-        // )
-        // )
-      );
+    // const cancel = cancel$ === undefined ? Rx.merge(up$, leave$) : cancel$;
+    const cancel$ = Rx.merge(up$, leave$);
+
+    const body$ = Rx.merge(down$, move$, cancel$);
+    const singleDrag$ = body$.pipe(
+      Ro.windowToggle(down$, () => cancel$),
+      Ro.mergeAll()
+    );
+    const continuouseDrag$ = down$.pipe(
+      Ro.switchMap((d) => body$.pipe(Ro.startWith(d)))
+    );
+
+    const f$ = (isContinuous ? continuouseDrag$ : singleDrag$).pipe(
+      Ro.scan(
+        (
+          acc: {
+            origin: Vector2;
+            current: Vector2;
+            last: Vector2;
+            tag: string;
+          },
+          cur: MouseEvent
+        ) => ({
+          origin:
+            cur.type === 'mousedown'
+              ? new Vector2(cur.offsetX - 500, cur.offsetY - 500)
+              : acc.origin,
+          last:
+            cur.type === 'mousedown'
+              ? new Vector2(cur.offsetX - 500, cur.offsetY - 500)
+              : acc.current,
+          tag: cur.type === 'mouseleave' ? 'mouseup' : cur.type,
+          current: new Vector2(cur.offsetX - 500, cur.offsetY - 500),
+          // last: acc.current,
+        }),
+        {
+          origin: new Vector2(0, 0),
+          current: new Vector2(0, 0),
+          last: new Vector2(0, 0),
+          tag: 'mousedown',
+        }
+      )
+      // )
+      // )
+    );
+
     return f$;
   }
 
+  getMeshBasicMaterial(color: Color) {
+    return new MeshBasicMaterial({ color, side: DoubleSide });
+  }
   createDrag(element: HTMLElement) {
     const down$ = fromEvent(element, 'mousedown') as Rx.Observable<MouseEvent>;
     const move$ = fromEvent(element, 'mousemove') as Rx.Observable<MouseEvent>;
