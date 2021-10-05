@@ -17,8 +17,6 @@ import * as Three from 'three';
 import * as Rx from 'rxjs';
 import * as Ro from 'rxjs/operators';
 import * as L from 'lodash';
-import { number } from 'fp-ts';
-import { printMatrix3, printMatrix4 } from '../share/utils';
 
 enum BaseModelName {
   box = 'box',

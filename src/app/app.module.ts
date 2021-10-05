@@ -23,6 +23,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ImageGridComponent } from './image-grid/image-grid.component';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpConcernComponent } from './http-concern/http-concern.component';
+import { RenderTargetComponent } from './render-target/render-target.component';
 // import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
@@ -40,6 +41,7 @@ import { HttpConcernComponent } from './http-concern/http-concern.component';
     GameComponent,
     ImageGridComponent,
     HttpConcernComponent,
+    RenderTargetComponent,
   ],
   imports: [
     BrowserModule,
@@ -67,6 +69,7 @@ import { HttpConcernComponent } from './http-concern/http-concern.component';
       { path: 'game', component: GameComponent },
       { path: 'image-grid', component: ImageGridComponent },
       { path: 'http-concern', component: HttpConcernComponent },
+      { path: 'render-target', component: RenderTargetComponent },
     ]),
   ],
   providers: [],
