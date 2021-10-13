@@ -24,6 +24,7 @@ import { ImageGridComponent } from './image-grid/image-grid.component';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpConcernComponent } from './http-concern/http-concern.component';
 import { RenderTargetComponent } from './render-target/render-target.component';
+import { ProcessingPassComponent } from './processing-pass/processing-pass.component';
 // import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
@@ -42,6 +43,7 @@ import { RenderTargetComponent } from './render-target/render-target.component';
     ImageGridComponent,
     HttpConcernComponent,
     RenderTargetComponent,
+    ProcessingPassComponent,
   ],
   imports: [
     BrowserModule,
@@ -70,6 +72,7 @@ import { RenderTargetComponent } from './render-target/render-target.component';
       { path: 'image-grid', component: ImageGridComponent },
       { path: 'http-concern', component: HttpConcernComponent },
       { path: 'render-target', component: RenderTargetComponent },
+      { path: 'processing-pass', component: ProcessingPassComponent },
     ]),
   ],
   providers: [],

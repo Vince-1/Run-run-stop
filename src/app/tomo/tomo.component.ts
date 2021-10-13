@@ -13,7 +13,6 @@ import {
   ShaderMaterial,
   MeshBasicMaterial,
   PlaneBufferGeometry,
-  Raycaster,
   CircleBufferGeometry,
   Matrix4,
   Matrix3,
@@ -64,7 +63,6 @@ import { scan } from 'rxjs/operators';
 
 import * as I from 'monocle-ts/lib/Iso';
 import * as T from 'monocle-ts/Traversal';
-import * as Observable from 'zen-observable';
 import * as lodash from 'lodash';
 import { StoreByArray, WithId } from '../share/store';
 import {
@@ -1159,6 +1157,7 @@ export class TomoComponent implements OnInit {
     this.shaderMaterial.uniforms.shape.value = img.shape;
   }
   setColormap(c: Texture) {}
+
   render() {
     this.renderer!.render(this.scene, this.camera);
   }
