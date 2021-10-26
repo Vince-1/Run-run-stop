@@ -9,8 +9,18 @@ import { ConwayLifeGameComponent } from './conway-life-game/conway-life-game.com
 import { ShaderDmeosComponent } from './shader-dmeos/shader-dmeos.component';
 import { TileImageComponent } from './tile-image/tile-image.component';
 
+
 import { FormsModule } from '@angular/forms';
 import { TableManagementComponent } from './table-management/table-management.component';
+import { GpuinteractiveComponent } from './Gpuinteractive/Gpuinteractive.component';
+import { ColorshowComponent } from './colorshow/colorshow.component';
+import { ColorPicker} from './color-picker/color-picker.component';
+import { ShaderColorpickerComponent } from './shader-colorpicker/shader-colorpicker.component';
+import { ShaderColorpickerGpuComponent } from './shader-colorpicker-gpu/shader-colorpicker-gpu.component';
+import { CameraFocusComponent } from './camera-focus/camera-focus.component';
+import { WireframComponent } from './wirefram/wirefram.component';
+import { TestPlanegeometryComponent } from './test-planegeometry/test-planegeometry.component';
+
 import { BoundingboxPointSourceComponent } from './boundingbox-point-source/boundingbox-point-source.component';
 import { ThreeViewComponent } from './boundingbox-point-source/three-view/three-view.component';
 import { SingleViewComponent } from './boundingbox-point-source/single-view/single-view.component';
@@ -18,6 +28,7 @@ import { PointSourceModule } from './boundingbox-point-source/point-source.modul
 import { TomoComponent } from './tomo/tomo.component';
 import { DanceComponent } from './dance/dance.component';
 import { AudioPlayerComponent } from './audio-player/audio-player.component';
+import { SigleCanvasComponent } from './sigle-canvas/sigle-canvas.component';
 import { GameComponent } from './game/game.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ImageGridComponent } from './image-grid/image-grid.component';
@@ -32,12 +43,22 @@ import { ImageGridComponent } from './image-grid/image-grid.component';
     ShaderDmeosComponent,
     TileImageComponent,
     TableManagementComponent,
+    GpuinteractiveComponent,
+    ColorshowComponent,
+    ColorPicker,
+    ShaderColorpickerComponent,
+    ShaderColorpickerGpuComponent,
+    CameraFocusComponent,
+    WireframComponent,
+    TestPlanegeometryComponent,
+    SigleCanvasComponent,
     TomoComponent,
     DanceComponent,
     AudioPlayerComponent,
     GameComponent,
     ImageGridComponent,
   ],
+ 
   imports: [
     BrowserModule,
     FormsModule,
@@ -50,6 +71,13 @@ import { ImageGridComponent } from './image-grid/image-grid.component';
       { path: 'conway', component: ConwayLifeGameComponent },
       { path: 'shader demo', component: ShaderDmeosComponent },
       { path: 'tile image', component: TileImageComponent },
+      { path: 'gpuinteractive',component:GpuinteractiveComponent},
+      { path: 'colorpicker',component:ColorshowComponent},
+      { path: 'shader-colorpicker',component:ShaderColorpickerComponent},
+      {path: 'shader-colorpicker-gpu',component: ShaderColorpickerGpuComponent},
+      {path:'camera focus',component:CameraFocusComponent},
+      {path:'testwirefram',component:WireframComponent},
+      {path:'testPlaneGeometry',component:TestPlanegeometryComponent},
       {
         path: 'boudingbox point source',
         component: BoundingboxPointSourceComponent,
@@ -59,6 +87,7 @@ import { ImageGridComponent } from './image-grid/image-grid.component';
         component: TomoComponent,
       },
       { path: 'dance', component: DanceComponent },
+      {path:'sigleCanvas',component:SigleCanvasComponent},
       { path: 'game', component: GameComponent },
       { path: 'image-grid', component: ImageGridComponent },
     ]),

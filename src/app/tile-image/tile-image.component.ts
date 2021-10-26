@@ -90,8 +90,10 @@ export class TileImageComponent implements OnInit, OnDestroy {
     loadStubData(StubImage3D.mriHead).then(
       (x) => {
         console.log(x);
+        const d = new Uint16Array(x.data);
         this.shaderMaterial.uniforms.img.value = makeTexture3d(
-          transform16to32(x.data),
+          // transform16to32(x.data),
+          d,
           x.shape.x,
           x.shape.y,
           x.shape.z

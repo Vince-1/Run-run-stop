@@ -1,0 +1,301 @@
+#mo-color-sat-val {
+    width: 600px;
+    height: 600px;
+    position: relative;
+    cursor: crosshair;
+    overflow: hidden;
+    background: transparent;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    // 饱和度 越往右饱和度越高
+    &::before {
+      background: linear-gradient(to right, white, transparent);
+    }
+
+    // 明度 越往上亮度值越高
+    &::after {
+      background: linear-gradient(to top, black, transparent);
+    }
+
+    >.mo-color-thumb {
+      color: white;
+      >span {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        // 这里的边框色会自动继承文本颜色
+        border: 1px solid currentColor;
+        background-color: rgba(white, .025);
+        transform: translate(-5px, -5px);
+      }
+    }
+  }
+
+  // 滑块
+  #mo-color-thumb {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 14px;
+      width: 14px;
+      box-sizing: border-box;
+      border-radius: 1px;
+      background: #fff;
+      border: 1px solid #f0f0f0;
+      box-shadow: 0 0 2px rgba(0, 0, 0, .6);
+      z-index: 1;
+  }
+
+  #mo-color-thumb1 {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 14px;
+      width: 14px;
+      box-sizing: border-box;
+      border-radius: 1px;
+      background: #fff;
+      border: 1px solid #f0f0f0;
+      box-shadow: 0 0 2px rgba(0, 0, 0, .6);
+      z-index: 1;
+  }
+
+  #mo-color-thumb2 {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 14px;
+      width: 14px;
+      box-sizing: border-box;
+      border-radius: 1px;
+      background: #fff;
+      border: 1px solid #f0f0f0;
+      box-shadow: 0 0 2px rgba(0, 0, 0, .6);
+      z-index: 1;
+  }
+
+  #mo-color-hue,
+  #mo-color-alpha {
+    width: 600px;
+    height: 10px;
+    position: relative;
+    margin: 10px 0 0 0;
+    cursor: pointer;
+
+    >.mo-color-rail {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    >.mo-color-thumb>span {
+      width: 4px;
+      height: 10px;
+      background-color: white;
+      box-shadow: rgba(black, .6) 0 0 2px;
+      transform: translateX(-2px);
+    }
+  }
+
+  // 色相
+  #mo-color-hue,#mo-color-rail {
+    background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+  }
+
+  // 透明度
+  #mo-color-alpha {
+    background-color: white;
+    background-image: linear-gradient(45deg, #c5c5c5 25%, transparent 0, transparent 75%, #c5c5c5 0, #c5c5c5), linear-gradient(45deg, #c5c5c5 25%, transparent 0, transparent 75%, #c5c5c5 0, #c5c5c5);
+    background-size: 10px 10px;
+    background-position: 0 0, 5px 5px;
+
+    // 使用JavaScript更新背景色
+    >.mo-color-rail {
+      background-color: transparent;
+    }
+  }
+  #mo-color-sat-val1 {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      cursor: crosshair;
+      overflow: hidden;
+      background: rgb(136, 136, 136);
+  
+     
+      }
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// .mo-color-sat-val {
+//     width: 600px;
+//     height: 600px;
+//     position: relative;
+//     cursor: crosshair;
+//     overflow: hidden;
+//     background: transparent;
+
+//     &::before,
+//     &::after {
+//       content: '';
+//       position: absolute;
+//       top: 0;
+//       left: 0;
+//       width: 100%;
+//       height: 100%;
+//       z-index: 2;
+//     }
+
+//     // 饱和度 越往右饱和度越高
+//     &::before {
+//       background: linear-gradient(to right, white, transparent);
+//     }
+
+//     // 明度 越往上亮度值越高
+//     &::after {
+//       background: linear-gradient(to top, black, transparent);
+//     }
+//     >.mo-color-thumb {
+//         color: white;
+//         >span {
+//           width: 10px;
+//           height: 10px;
+//           border-radius: 50%;
+//           // 这里的边框色会自动继承文本颜色
+//           border: 1px solid currentColor;
+//           background-color: rgba(white, .025);
+//           transform: translate(-5px, -5px);
+//         }
+//       }
+// }
+
+//     .mo-color-hue>.mo-color-rail {
+//         background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+//       }
+
+//     .mo-color-hue,
+//     .mo-color-alpha {
+//         width: 1000px;
+//         height: 10px;
+//         position: relative;
+//         margin: 10px 0 0 0;
+      
+//         cursor: pointer;
+  
+//         >.mo-color-rail {
+//           position: absolute;
+//           top: 0;
+//           left: 0;
+//           width: 100%;
+//           height: 100%;
+//           overflow: hidden;
+//         }
+  
+//         >.mo-color-thumb>span {
+//           width: 4px;
+//           height: 10px;
+//           background-color: white;
+//           box-shadow: rgba(black, .6) 0 0 2px;
+//           transform: translateX(-2px);
+//         }
+//       }
+  
+//     .mo-color-alpha {
+//         background-color: white;
+//         background-image: linear-gradient(45deg, #c5c5c5 25%, transparent 0, transparent 75%, #c5c5c5 0, #c5c5c5), linear-gradient(45deg, #c5c5c5 25%, transparent 0, transparent 75%, #c5c5c5 0, #c5c5c5);
+//         background-size: 10px 10px;
+//         background-position: 0 0, 5px 5px;
+  
+//         // 使用JavaScript更新背景色
+//         >.mo-color-rail {
+//           background-color: transparent;
+//         }
+//       }
+  
+//       .mo-color-thumb {
+//         position: absolute;
+//         z-index: 1;
+//         outline: none;
+  
+//         >span {
+//           display: block;
+//         }
+//       }
+
+  
+//     input[type=range] {
+//         -webkit-appearance: none;
+//         width: 1000px;
+//         height: 0.2px;
+//         // border-radius: 10px;
+//         // margin: 9px 0 0 0;
+//         z-index: 1;
+//         outline: none;
+//         >span {
+//             display: block;
+//           }
+//     }
+
+//         input[type=range]::-ms-track {
+//             height: 25px;
+//             border-radius: 10px;
+//             box-shadow: 0 1px 1px #def3f8, inset 0 .125em .125em #0d1112;
+//             border-color: transparent; /*去除原有边框*/
+//             color: transparent; /*去除轨道内的竖线*/
+//         }

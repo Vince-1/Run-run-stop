@@ -124,7 +124,7 @@ export class TomoComponent implements OnInit {
       pixelSize: { value: new Vector3(1, 1, 1) },
       window: { value: new Vector2(0, 1) },
       windowSize: {
-        value: new Vector2(this.width, this.height),
+        value: new Vector2(this.tx, this.tz),
       },
       view: { value: 0 }, // 0,1,2 = xy,yz,xz
       slicer: { value: 1.0 },
@@ -138,7 +138,7 @@ export class TomoComponent implements OnInit {
     side: DoubleSide,
   });
   plane = new Mesh(
-    new PlaneBufferGeometry(window.innerWidth, window.innerHeight),
+    new PlaneBufferGeometry(this.tx, this.tz),
     // this.redMaterial
     this.shaderMaterial
   );
