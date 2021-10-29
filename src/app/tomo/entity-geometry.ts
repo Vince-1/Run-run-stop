@@ -6,6 +6,7 @@ import {
   CircleBufferGeometry,
   Color,
   DoubleSide,
+  EllipseCurve,
   Matrix3,
   Mesh,
   MeshBasicMaterial,
@@ -22,6 +23,7 @@ enum BaseModelName {
   box = 'box',
   circle = 'circle',
   line = 'line',
+  ellipse = 'ellipse',
 }
 
 enum BoxType {
@@ -152,9 +154,14 @@ interface Line {
   end: Vector2;
   width: number;
 }
+interface ellipse {
+  name: BaseModelName.ellipse;
+  rb: Vector2;
+  lt: Vector2;
+}
 
 // type BaseModel = (Box | Circle | Line) & { modelMatrix: Matrix3 };
-type BaseModel = Box | Circle | Line;
+type BaseModel = Box | Circle | Line | ellipse;
 
 function toLRTB(b: Box): BoxLRTB {
   switch (b.boxType) {
@@ -279,6 +286,15 @@ function isOn(m: BaseModel) {
           p.y <= box.bottom
         );
       };
+    case 'ellipse':
+      return (p: Vector2) => {
+        return (
+          p.x >= m.lt.x &&
+          p.x <= m.rb.x &&
+          p.y >= m.lt.y &&
+          p.y <= m.rb.y
+        );
+      };
     default:
       return () => false;
   }
@@ -357,6 +373,13 @@ export function toGeometry(m: BaseModel) {
       g.translate(box.center.x, box.center.y, 0);
       return g;
     }
+    case BaseModelName.ellipse: {
+      const curve = new EllipseCurve(0, 0, (m.rb.x-m.lt.x)/2,( Math.abs(m.rb.y-m.lt.y))/2, 0,Math.PI*2, false, 0);
+      const points = curve.getPoints(((m.rb.x-m.lt.x)+ Math.abs(m.rb.y-m.lt.y))*2);
+      const geometry = new BufferGeometry().setFromPoints(points);
+      geometry.translate(m.rb.x/2+m.lt.x/2, m.lt.y/2+m.rb.y/2, 0);
+      return geometry;
+    }
     default:
       return new BufferGeometry();
   }
@@ -368,12 +391,17 @@ export function toMesh(m: BaseModel) {
     color: new Color('red'),
     side: DoubleSide,
   });
+
   switch (m.name) {
     case 'line':
       return new Three.Line(geometry, material);
     case 'circle':
     case 'box':
       return new Mesh(geometry, material);
+    case 'ellipse': {
+      let ellipse = new Three.Line(geometry, material);
+      return ellipse;
+    }
   }
 }
 
@@ -534,6 +562,13 @@ export abstract class Entity2d {
       start: p1,
       end: p2,
       width: this.lineWidth,
+    };
+  }
+  getEllipse(lt: Vector2, rb: Vector2): ellipse {
+    return {
+      name: BaseModelName.ellipse,
+      lt: lt,
+      rb: rb,
     };
   }
 }
@@ -1166,39 +1201,84 @@ class Roi extends Entity2d {
     const l24 = this.getLine(rb, rt);
     const l14 = this.getLine(lt, rt);
     const l23 = this.getLine(rb, lb);
-
-    return { box, p1, p2, p3, p4, p1_r, p2_r, p3_r, p4_r, l13, l24, l14, l23 };
+    const e1 = this.getEllipse(
+      lt,rb
+    );
+    // const e1 = this.getBox();
+    console.log(box,e1)
+    if (this.base.roiType === RoiType.rectangle) {
+      return {
+        box,
+        p1,
+        p2,
+        p3,
+        p4,
+        p1_r,
+        p2_r,
+        p3_r,
+        p4_r,
+        l13,
+        l24,
+        l14,
+        l23,
+      };
+    } else if (this.base.roiType === RoiType.elipse) {
+      return { p1, p2, p3, p4, p1_r, p2_r, p3_r, p4_r, e1 };
+    }
   }
 
   hotZone(p: Vector2) {
     const baseModels = this.baseModel();
     const position = p.clone().applyMatrix3(this.modelMatrix.clone().invert());
-    switch (true) {
-      case isOn(baseModels.p1)(position):
-        return 'point1';
-      case isOn(baseModels.p2)(position):
-        return 'point2';
-      case isOn(baseModels.p3)(position):
-        return 'point3';
-      case isOn(baseModels.p4)(position):
-        return 'point4';
-      case isOn(baseModels.p1_r)(position):
-      case isOn(baseModels.p2_r)(position):
-      case isOn(baseModels.p3_r)(position):
-      case isOn(baseModels.p4_r)(position):
-        return Zones.rotate;
-      case isOn(baseModels.l13)(position):
-        return 'line13';
-      case isOn(baseModels.l24)(position):
-        return 'line24';
-      case isOn(baseModels.l14)(position):
-        return 'line14';
-      case isOn(baseModels.l23)(position):
-        return 'line23';
-      case isOn(baseModels.box)(position):
-        return Zones.move;
-      default:
-        return Zones.none;
+    if (this.base.roiType === RoiType.rectangle) {
+      switch (true) {
+        case isOn(baseModels.p1)(position):
+          return 'point1';
+        case isOn(baseModels.p2)(position):
+          return 'point2';
+        case isOn(baseModels.p3)(position):
+          return 'point3';
+        case isOn(baseModels.p4)(position):
+          return 'point4';
+        case isOn(baseModels.p1_r)(position):
+        case isOn(baseModels.p2_r)(position):
+        case isOn(baseModels.p3_r)(position):
+        case isOn(baseModels.p4_r)(position):
+          return Zones.rotate;
+        case isOn(baseModels.l13)(position):
+          return 'line13';
+        case isOn(baseModels.l24)(position):
+          return 'line24';
+        case isOn(baseModels.l14)(position):
+          return 'line14';
+        case isOn(baseModels.l23)(position):
+          return 'line23';
+        case isOn(baseModels.box)(position):
+          return Zones.move;
+        default:
+          return Zones.none;
+      }
+    } else if (this.base.roiType === RoiType.elipse) {
+      switch (true) {
+        case isOn(baseModels.p1)(position):
+          return 'point1';
+        case isOn(baseModels.p2)(position):
+          return 'point2';
+        case isOn(baseModels.p3)(position):
+          return 'point3';
+        case isOn(baseModels.p4)(position):
+          return 'point4';
+        case isOn(baseModels.p1_r)(position):
+        case isOn(baseModels.p2_r)(position):
+        case isOn(baseModels.p3_r)(position):
+        case isOn(baseModels.p4_r)(position):
+          return Zones.rotate;
+        case isOn(baseModels.e1)(position):
+          // return 'ellipse';
+          return Zones.move;
+        default:
+          return Zones.none;
+      }
     }
   }
   otherZones() {

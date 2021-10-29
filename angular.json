@@ -7,7 +7,7 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "less" 
+          "style": "less"
         }
       },
       "root": "",
@@ -125,5 +125,8 @@
       }
     }
   },
-  "defaultProject": "run-run-stop"
+  "defaultProject": "run-run-stop",
+  "cli": {
+    "analytics": "8f2126f3-1959-4461-bbe2-4847f1993592"
+  }
 }
